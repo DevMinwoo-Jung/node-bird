@@ -11,7 +11,7 @@
     "node": true,
     "es6": true
   },
-  "extends": ["eslint:recomended", "plugin:react/recommended"],
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
   "plugins": ["import", "react-hooks"],
   "rules": {}
 }
