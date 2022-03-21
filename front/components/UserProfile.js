@@ -22,7 +22,7 @@ const UserProfile = ({ setIsLoggedIn }) => {
         </div>,
         <div key="follwers">
           {" "}
-          팔러워
+          팔로워
           <br />0{" "}
         </div>,
       ]}
