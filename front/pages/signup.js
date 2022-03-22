@@ -79,7 +79,7 @@ const signup = () => {
           <br />
           <Input
             name="user-password"
-            value={password}
+            value={passwordCheck}
             required
             onChange={onChangePasswordCheck}
           />
