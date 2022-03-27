@@ -12,7 +12,7 @@ const configtureStore = () => {
   const stroe = createStore(reducer, enhancer);
   stroe.dispatch({
     type: "CHANGE_NICKNAME",
-    data: "minwooJjang",
+    data: "is it working??",
   });
   return stroe;
 };
