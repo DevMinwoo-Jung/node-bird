@@ -9,6 +9,7 @@ const configtureStore = () => {
     process.env.NODE_ENV === "production"
       ? compose(applyMiddleware(...middlewares))
       : composeWithDevTools(applyMiddleware(...middlewares));
+
   const stroe = createStore(reducer, enhancer);
   stroe.dispatch({
     type: "CHANGE_NICKNAME",
