@@ -1,10 +1,10 @@
-/* eslint-disable react/prop-types */
 import { Button, Form } from "antd";
-import React, { useCallback, useState, useMemo } from "react";
+import React, {useCallback, useMemo} from "react";
 import Link from "next/link";
 import styled from "styled-components";
 import { useDispatch } from "react-redux";
 import { loginAction } from "../reducers/user";
+import useInput from "../hooks/useInput";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -17,20 +17,11 @@ const FormWrapper = styled(Form)`
 const LoginForm = () => {
   const dispatch = useDispatch();
 
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-
-  const onChangeId = useCallback((e) => {
-    setId(e.target.value);
-  }, []);
-
-  const onChangePassword = useCallback((e) => {
-    setPassword(e.target.value);
-  }, []);
+  const [id, onChangeId] = useInput('');
+  const [password, onChangePassword] = useInput('');
 
   const onSubmitForm = useCallback(() => {
-    console.log(id, password);
-    dispatch(loginAction({ id, password }));
+    dispatch(loginAction({ id, password, }));
   }, [id, password]);
 
   const style = useMemo(() => ({ marginTop: 10 }), []);
@@ -45,18 +36,17 @@ const LoginForm = () => {
           name="user-id"
           value={id}
           onChange={onChangeId}
-          type="text"
           required
         />
       </div>
       <div>
-        <label htmlFor="user-id">비밀번호</label>
+        <label htmlFor="user-password">비밀번호</label>
         <br />
         <input
           name="user-password"
           value={password}
           onChange={onChangePassword}
-          type="text"
+          type="password"
           required
         />
       </div>
@@ -70,7 +60,6 @@ const LoginForm = () => {
           </a>
         </Link>
       </ButtonWrapper>
-      <div></div>
     </FormWrapper>
   );
 };
