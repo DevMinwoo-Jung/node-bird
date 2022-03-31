@@ -17,6 +17,7 @@ export const LOG_IN = 'LOG_IN'; // 액션의 이름
 export const LOG_OUT = 'LOG_OUT';
 
 export const loginAction = (data) => {
+  console.debug(data)
   return {
     type: LOG_IN,
     data,

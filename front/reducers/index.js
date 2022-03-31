@@ -1,13 +1,8 @@
-/* eslint-disable no-unused-vars */
 import { HYDRATE } from "next-redux-wrapper";
 import user from "./user";
 import post from "./post";
 import { combineReducers } from "redux";
 
-const initialState = {
-  user: {},
-  post: {},
-};
 
 export const logoutAction = (data) => {
   return {

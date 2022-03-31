@@ -10,12 +10,8 @@ const configtureStore = () => {
       ? compose(applyMiddleware(...middlewares))
       : composeWithDevTools(applyMiddleware(...middlewares));
 
-  const stroe = createStore(reducer, enhancer);
-  stroe.dispatch({
-    type: "CHANGE_NICKNAME",
-    data: "is it working??",
-  });
-  return stroe;
+  const store = createStore(reducer, enhancer);
+  return store;
 };
 
 const wrapper = createWrapper(configtureStore, {
