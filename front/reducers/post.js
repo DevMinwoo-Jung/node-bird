@@ -1,65 +1,64 @@
-// dummy data
-// 다른 정보랑 합치는 건 대문자로 시작한다. 근데 이건 취향이긴 함
 export const initialState = {
   mainPosts: [{
     id: 1,
     User: {
       id: 1,
-      nickname: '정민우',
+      nickname: '제로초',
     },
-    content: 'gagagaga',
+    content: '첫 번째 게시글',
     Images: [{
-      src: 'exex',
+      src: 'https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726',
     }, {
-      src: 'exex1',
+      src: 'https://gimg.gilbut.co.kr/book/BN001958/rn_view_BN001958.jpg',
     }, {
-      src: 'exex2',
-    }, {
-      src: 'exex3',
+      src: 'https://gimg.gilbut.co.kr/book/BN001998/rn_view_BN001998.jpg',
     }],
     Comments: [{
       User: {
-        nickname: 'minwoo',
+        nickname: 'nero',
       },
-      content: 'wow',
+      content: '우와 개정판이 나왔군요~',
     }, {
       User: {
-        nickname: 'minw33oo',
+        nickname: 'hero',
       },
-      content: 'wow44',
-    }],
+      content: '얼른 사고싶어요~',
+    }]
   }],
   imagePaths: [],
   postAdded: false,
-}
+};
 
 const ADD_POST = 'ADD_POST';
+
 export const addPost = {
   type: ADD_POST,
-}
+};
 
 const dummyPost = {
   id: 2,
-  content: 'i am dummy',
+  content: '더미데이터입니다.',
   User: {
     id: 1,
-    nickname: 'hahahoho',
+    nickname: '제로초',
   },
   Images: [],
   Comments: [],
-}
-
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case ADD_POST:
-      return {
-        ...state,
-        mainPost: [dummyPost, ...state.mainPosts], // 앞에다 추가해야 위로 올라가겠지??
-        postAdded: true,
-      }
-    default:
-      return state;
-  }
 };
 
-export default reducer;
+export default (state = initialState, action) => {
+  switch (action.type) {
+    case ADD_POST: {
+      return {
+        ...state,
+        mainPosts: [dummyPost, ...state.mainPosts],
+        postAdded: true,
+      };
+    }
+    default: {
+      return {
+        ...state,
+      };
+    }
+  }
+};
