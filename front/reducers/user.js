@@ -2,8 +2,6 @@
 export const initialState = {
   isLoggedIn: false,
   me: null,
-  signUpData: {},
-  loginData: {},
 };
 
 export const LOG_IN = 'LOG_IN'; // 액션의 이름

@@ -3,7 +3,6 @@ import { Avatar, Button, Card } from "antd";
 import { useDispatch } from "react-redux";
 import { logoutAction } from "../reducers/user";
 
-// eslint-disable-next-line react/prop-types
 const UserProfile = () => {
   const dispatch = useDispatch();
 

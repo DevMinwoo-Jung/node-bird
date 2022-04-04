@@ -11,9 +11,7 @@ const App = ({ Component }) => {
         <meta charSet="utf-8" />
         <title>Node Bird!</title>
       </Head>
-    <React.StrictMode>
       <Component />
-    </React.StrictMode>
     </>
   );
 };
