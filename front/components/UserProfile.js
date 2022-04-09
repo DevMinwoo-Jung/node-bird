@@ -23,7 +23,7 @@ const UserProfile = () => {
           팔로잉
           <br />0{" "}
         </div>,
-        <div key="follwers">
+        <div key="followers">
           {" "}
           팔로워
           <br />0{" "}

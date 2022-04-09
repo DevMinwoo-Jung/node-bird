@@ -7,6 +7,8 @@ import PostCard from "../components/PostCard";
 const Home = () => {
     const { isLoggedIn } = useSelector((state) => state.user)
     const { mainPosts } = useSelector((state) => state.post)
+    const sibal = useSelector((state) => state)
+    console.log(sibal)
 
   return (
     <AppLayout>
@@ -23,5 +25,4 @@ const Home = () => {
     </AppLayout>
   );
 };
-// applayout 안에 있는 애들이 children이다
 export default Home;

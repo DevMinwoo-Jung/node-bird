@@ -21,7 +21,7 @@ const PostForm = () => {
         imageInput.current.click()
     }, [imageInput.current])
 
-    return (<Form style={{magirn: '10px 0 20px'}} encType={"multipart/form-data"} onFinish={onSubmit}>
+    return (<Form style={{margin: '10px 0 20px'}} encType={"multipart/form-data"} onFinish={onSubmit}>
         <Input.TextArea
             value={text}
             onChange={onChangeText}

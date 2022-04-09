@@ -4,7 +4,7 @@ import AppLayout from "../components/AppLayout";
 import NicknameEditForm from "../components/NicknameEditForm";
 import FollowList from "../components/FollowList";
 import {useSelector} from "react-redux";
-import {Router} from "next/router";
+import Router from "next/router";
 
 const profile = () => {
   const { isLoggedIn } = useSelector(state => state.user);
