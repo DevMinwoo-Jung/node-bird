@@ -5,6 +5,7 @@ import Head from "next/head";
 import wrapper from "../store/configtureStore";
 
 const App = ({ Component }) => {
+  console.log(Component)
   return (
     <>
       <Head>

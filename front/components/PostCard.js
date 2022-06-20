@@ -60,9 +60,9 @@ const PostCard = ({ post }) => {
                 extra={<FollowButton post={post} />}
             >
                 <Card.Meta
-                    avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
-                    title={post.User.nickname}
-                    description={<PostCardContent postData={post.content} />}
+                avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+                title={post.User.nickname}
+                description={<PostCardContent postData={post.content} />}
                 />
             </Card>
             {commentFormOpened && (
