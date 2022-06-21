@@ -4,20 +4,24 @@ import PropTypes from 'prop-types';
 import { RetweetOutlined, HeartTwoTone, HeartOutlined, MessageOutlined, EllipsisOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
 import Link from 'next/link';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
 import PostImages from './PostImages';
 import FollowButton from './FollowButton';
+import { REMOVE_POST_REQUEST } from '../reducers/post';
 
 const CardWrapper = styled.div`
-  margin-bottom: 20px;
+    margin-bottom: 20px;
 `;
 
 const PostCard = ({ post }) => {
+    console.log(post)
     const [commentFormOpened, setCommentFormOpened] = useState(false);
     const id = useSelector((state) => state.user.me && state.user.me.id);
+    const dispatch = useDispatch()
+    const { removePostLoading } = useSelector((state) => state.post) 
 
     const [liked, setLiked] = useState(false);
 
@@ -28,6 +32,13 @@ const PostCard = ({ post }) => {
     const onToggleComment = useCallback(() => {
         setCommentFormOpened((prev) => !prev);
     }, []);
+
+    const onRemovePost = useCallback(() => {
+        dispatch({
+            type: REMOVE_POST_REQUEST,
+            data: post.id,
+        })
+    }, [])
 
     return (
         <CardWrapper key={post.id}>
@@ -47,7 +58,7 @@ const PostCard = ({ post }) => {
                                     ? (
                                         <>
                                             <Button>수정</Button>
-                                            <Button type="danger">삭제</Button>
+                                            <Button type="danger" loading={removePostLoading} onClick={onRemovePost}>삭제</Button>
                                         </>
                                     )
                                     : <Button>신고</Button>}
@@ -68,7 +79,7 @@ const PostCard = ({ post }) => {
             {commentFormOpened && (
                 <>
                     <CommentForm post={post} />
-                    <List
+                    <List 
                         header={`${post.Comments.length} 댓글`}
                         itemLayout="horizontal"
                         dataSource={post.Comments}
@@ -96,11 +107,13 @@ PostCard.propTypes = {
     post: PropTypes.shape({
         id: PropTypes.number,
         User: PropTypes.object,
+        UserId: PropTypes.number,
         content: PropTypes.string,
         createdAt: PropTypes.object,
         Comments: PropTypes.arrayOf(PropTypes.any),
         Images: PropTypes.arrayOf(PropTypes.any),
-    }),
-};
+        }).isRequired,
+    };
+    
 
 export default PostCard;

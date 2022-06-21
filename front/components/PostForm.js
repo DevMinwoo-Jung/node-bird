@@ -1,31 +1,30 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef } from 'react';
 import {Button, Form, Input} from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import {addPost} from "../reducers/post";
+import { addPost } from "../reducers/post";
+import useInput from '../hooks/useInput';
 
 const PostForm = () => {
     const imageInput = useRef()
     const dispatch = useDispatch()
-    const {imagePaths, postAdded} = useSelector(state => state.post)
-    const [text, setText] = useState('')
+    const { imagePaths, addPostLoading, addPostDone } = useSelector((state) => state.post);
+    const [text, onChangeText, setText] = useInput('')
 
     const onClickImageUpload = useCallback(() => {
         imageInput.current.click()
     }, [imageInput.current])
 
-    const onChangeText = useCallback((e) => {
-        setText(e.target.value)
-    }, [])
-
     useEffect(() => {
-        if (postAdded) {
+        if (addPostDone) {
             setText('');
         }
-    }, [postAdded]);
+    }, [addPostDone]);
 
     const onSubmit = useCallback(() => {
-        dispatch(addPost)
-    }, [])
+        console.log('여긴성공')
+        console.log(text)
+        dispatch(addPost(text))
+    }, [text])
 
 
     return (
@@ -38,7 +37,7 @@ const PostForm = () => {
         <div>
             <input type='file' multiple hidden ref={imageInput}/>
             <Button onClick={onClickImageUpload}>이미지 업로드</Button>
-            <Button type='primary' style={{float: 'right'}} htmlType='submit'>twit twit</Button>
+            <Button type='primary' style={{float: 'right'}} htmlType='submit' loading={addPostLoading}>twit twit</Button>
         </div>
         <div>
             {imagePaths.map((v) => (<div key={v} style={{display: 'inline-block'}}>

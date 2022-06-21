@@ -1,32 +1,104 @@
-// import { all, fork, put, throttle, delay } from 'redux-saga/effects'
-// import { axios } from 'axios'
+import { all, fork, put, delay, takeLatest } from 'redux-saga/effects'
+import { axios } from 'axios'
+import { ADD_COMMENT_FAILURE, ADD_COMMENT_REQUEST, ADD_COMMENT_SUCCESS,
+            ADD_POST_FAILURE, ADD_POST_REQUEST, ADD_POST_SUCCESS,
+            REMOVE_POST_SUCCESS, REMOVE_POST_FAILURE
+} from '../reducers/post'
+import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user'
+import shortid from 'shortid'
 
-// function addPostAPI() {
-//     return axios.post('/api/post')
-// }
+function addPostAPI() {
+    return axios.post('/api/post')
+}
 
-// function* addPost() {
-//     try {
-//         yield delay(1000)
-//         // const result = yield call(addPostAPI)
-//         yield put({
-//             type: 'ADD_POST_SUCCESS',
-//         //    data: result.data
-//         });
-//     } catch (err) {
-//         yield put({
-//             type: 'ADD_POST_FAILURE',
-//         //    data: err.response.data
-//         })
-//     }
-// }
+function* addPost(action) {
+    try {
+      // const result = yield call(addPostAPI, action.data);
+      yield delay(1000);
+      const id = shortid.generate();
+      yield put({
+        type: ADD_POST_SUCCESS,
+        data: {
+          id,
+          content: action.data,
+        },
+      });
+      yield put({
+        type: ADD_POST_TO_ME,
+        data: id,
+      });
+    } catch (err) {
+      console.error(err);
+      yield put({
+        type: ADD_POST_FAILURE,
+        data: err.response.data,
+      });
+    }
+  }
 
-// function* watchAddPost() {
-//     yield throttle('ADD_POST_REQUEST', addPost, 2000)
-// }
+function removePostAPI(data) {
+    return axios.delete('/api/post', data)
+}
 
-// export default function* rootSaga() {
-//     yield all([
-//         fork(watchAddPost),
-//     ])
-// }
+function* removePost(action) {
+    try {
+        yield delay(1000)
+        yield put({
+            type: REMOVE_POST_SUCCESS,
+            data: action.data,
+        });
+        yield put({
+            type: REMOVE_POST_OF_ME,
+            data: action.data,
+        });
+    } catch (err) {
+        console.log(err)
+        yield put({
+            type: REMOVE_POST_FAILURE,
+            data: err.response.data
+        })
+    }
+}
+
+function addCommentAPI(data) {
+    return axios.post(`/api/post/${data.postId}/comment`, data)
+}
+
+function* addComment(action) {
+    try {
+        yield delay(1000)
+        yield put({
+            type: ADD_COMMENT_SUCCESS,
+            data: action.data
+        });
+        yield put({
+            type: REMOVE_POST_REQUEST,
+            data: action.data
+        });
+    } catch (err) {
+        yield put({
+            type: ADD_COMMENT_FAILURE,
+            data: err.response.data
+        })
+    }
+}
+
+function* watchAddPost() {
+    yield takeLatest('ADD_POST_REQUEST', addPost)
+}
+
+function* watchCommentPost() {
+    yield takeLatest('ADD_COMMENT_REQUEST', addComment)
+}
+
+function* watchRemovePost() {
+    yield takeLatest('REMOVE_POST_REQUEST', removePost)
+}
+
+export default function* rootSaga() {
+    yield all([
+        fork(watchAddPost),
+        fork(watchCommentPost),
+        fork(watchRemovePost),
+    ])
+}
