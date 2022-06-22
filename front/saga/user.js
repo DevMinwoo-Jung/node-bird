@@ -2,7 +2,9 @@ import { all, fork, put, takeLatest, delay } from 'redux-saga/effects'
 import { axios } from 'axios'
 import { LOG_IN_REQUEST , LOG_IN_SUCCESS, LOG_IN_FAILURE, 
     LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE, 
-    SIGN_UP_SUCCESS, SIGN_UP_FAILURE
+    SIGN_UP_SUCCESS, SIGN_UP_FAILURE, FOLLOW_REQUEST,
+    UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS,
+    FOLLOW_FAILURE, FOLLOW_SUCCESS
 } from '../reducers/user' 
 
 function loginAPI() {
@@ -22,6 +24,46 @@ function* login(action) {
     } catch (err) {
         yield put({
             type: LOG_IN_FAILURE,
+            data: err.response.data
+        })
+    }
+}
+
+function followAPI() {
+    return axios.post('/api/login')
+}
+
+// 특이하다 loginAPI(action.data, a, b, c) 이 형식이 call쓰면 아래처럼 됨
+function* follow(action) {
+    try {
+        yield delay(1000) // 비동기적 효과 주려공
+        yield put({
+            type: FOLLOW_SUCCESS,
+            data: action.data
+        });
+    } catch (err) {
+        yield put({
+            type: FOLLOW_FAILURE,
+            data: err.response.data
+        })
+    }
+}
+
+function unFollowAPI() {
+    return axios.post('/api/login')
+}
+
+// 특이하다 loginAPI(action.data, a, b, c) 이 형식이 call쓰면 아래처럼 됨
+function* unFollow(action) {
+    try {
+        yield delay(1000) // 비동기적 효과 주려공
+        yield put({
+            type: UNFOLLOW_SUCCESS,
+            data: action.data
+        });
+    } catch (err) {
+        yield put({
+            type: UNFOLLOW_FAILURE,
             data: err.response.data
         })
     }
@@ -77,9 +119,19 @@ function* watchSigUp() {
     yield takeLatest(SIGN_UP_SUCCESS, signUp)
 }
 
+function* watchFollow() {
+    yield takeLatest(FOLLOW_REQUEST, follow)
+}
+
+function* watchUnFollow() {
+    yield takeLatest(UNFOLLOW_REQUEST, unFollow)
+}
+
 export default function* userSaga() {
     yield all([
         fork(watchLogin),
         fork(watchLogout),
+        fork(watchFollow),
+        fork(watchUnFollow),
     ])
 }
