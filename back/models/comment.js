@@ -10,6 +10,11 @@ module.exports = (sequelize, DataType) => {
         charset: 'utf8mb4',
         collate: 'utf8mb4_general_ci', //한글, 이모티콘 저장
     });
-    Comment.associate = (db) => {};
+    // userId 1
+    // postId 3 같은 고유한 것이 생김
+    Comment.associate = (db) => {
+        db.Comment.belongsTo(db.User);
+        db.Comment.hasMany(db.Comment);
+    };
     return Comment;
-},k
+}
