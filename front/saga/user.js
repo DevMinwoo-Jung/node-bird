@@ -7,19 +7,19 @@ import { LOG_IN_REQUEST , LOG_IN_SUCCESS, LOG_IN_FAILURE,
     FOLLOW_FAILURE, FOLLOW_SUCCESS,
 } from '../reducers/user' 
 
-function loginAPI() {
-    return axios.post('/api/login')
+function loginAPI(data) {
+    return axios.post('/user/login', data)
+    // indexjs 에서 baseURL을 설정해줘서 앞으로는 주소를 안써줘도 된다
 }
 
 // 특이하다 loginAPI(action.data, a, b, c) 이 형식이 call쓰면 아래처럼 됨
 function* login(action) {
     try {
-        console.log('saga')
-        yield delay(1000) // 비동기적 효과 주려공
-        // const result = yield call(loginAPI, action.data)
+        console.log(action)
+        const result = yield call(loginAPI, action.data)
         yield put({
             type: LOG_IN_SUCCESS,
-            data: action.data
+            data: result.data
         });
     } catch (err) {
         yield put({
@@ -90,7 +90,7 @@ function* logout() {
 
 function signUpAPI(data) {
     console.log(data)
-    return axios.post('http://localhost:3065/user', data) // signUp에서 시작한 것이 email, password, nickname이 들어가있다!!
+    return axios.post(`/user`, data) // signUp에서 시작한 것이 email, password, nickname이 들어가있다!!
 }
 
 function* signUp(action) {
