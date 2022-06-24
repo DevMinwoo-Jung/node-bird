@@ -1,10 +1,10 @@
-import { all, fork, put, takeLatest, delay } from 'redux-saga/effects'
-import { axios } from 'axios'
+import { all, fork, put, takeLatest, delay, call } from 'redux-saga/effects'
+import axios from 'axios'
 import { LOG_IN_REQUEST , LOG_IN_SUCCESS, LOG_IN_FAILURE, 
     LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE, 
-    SIGN_UP_SUCCESS, SIGN_UP_FAILURE, FOLLOW_REQUEST,
+    SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE, FOLLOW_REQUEST,
     UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS,
-    FOLLOW_FAILURE, FOLLOW_SUCCESS
+    FOLLOW_FAILURE, FOLLOW_SUCCESS,
 } from '../reducers/user' 
 
 function loginAPI() {
@@ -88,18 +88,20 @@ function* logout() {
     }
 }
 
-function signUpAPI() {
-    return axios.post('/api/signUp')
+function signUpAPI(data) {
+    console.log(data)
+    return axios.post('http://localhost:3065/user', data) // signUp에서 시작한 것이 email, password, nickname이 들어가있다!!
 }
 
-function* signUP() {
+function* signUp(action) {
     try {
-        yield delay(1000)
-        // const result = yield call(logoutAPI)
+        const result = yield call(signUpAPI, action.data);
+        console.log(result)
         yield put({
             type: SIGN_UP_SUCCESS,
         });
     } catch (err) {
+        console.log(err)
         yield put({
             type: SIGN_UP_FAILURE,
             error: err.response.data
@@ -116,7 +118,7 @@ function* watchLogout() {
 }
 
 function* watchSigUp() {
-    yield takeLatest(SIGN_UP_SUCCESS, signUp)
+    yield takeLatest(SIGN_UP_REQUEST, signUp)
 }
 
 function* watchFollow() {
@@ -133,5 +135,6 @@ export default function* userSaga() {
         fork(watchLogout),
         fork(watchFollow),
         fork(watchUnFollow),
+        fork(watchSigUp),
     ])
 }
