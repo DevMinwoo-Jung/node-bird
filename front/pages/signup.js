@@ -15,13 +15,19 @@ const ErrorMessage = styled.div`
 
 const signup = () => {
   const dispatch = useDispatch()
-  const { signUpLoading, signUpDone, signUpError } = useSelector((state) => state.user)
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector((state) => state.user)
 
   const [email, onChangeEmail] = useInput("");
   const [password, onChangePassword] = useInput("");
   const [nickname, onChangeNickName] = useInput("");
   const [passwordCheck, setPasswordCheck] = useState("");
   const [passwordError, setPasswordError] = useState(false);
+
+  useEffect(() => {
+    if (me && me.id) {
+      Router.replace('/') // 뒤로가기 했을 때 그 페이지 안나오기 하려면
+    }
+  },[me && me.id])
 
   useEffect(() => {
     if (signUpDone) {

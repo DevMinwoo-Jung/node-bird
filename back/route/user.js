@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 const router = express.Router();
 const passport = require('passport');
 
-const { User } = require('../models');
+const { User, Post } = require('../models');
+const db = require('../models');
 
 router.post('/', async (req, res) => { // Post /user
     try {
@@ -46,14 +47,31 @@ router.post('/login', (req, res, next) => {
                 console.error(loginErr);
                 return next(loginErr);
             }
-            // res.setHeader('Cookie', 'miawdno')
-            return res.status(200).json(user); // 이제 프론트로 넘기기~
+            // res.setHeader('Cookie', 'miawdno');
+            const fullUserWithoutPassword = await User.findOne({
+                where: { id: user.id },
+                attributes: {
+                    exclude: ['password'] // 비밀번호 제외하고 다 가져온다
+                },
+                include: [{ // 다른 테블의 정보를 가져올 때  쓴다 (join 같은 것 인듯)
+                    model: Post,
+                    attributes: ['id'],
+                }, {
+                    model: User,
+                    as: 'Followings',
+                    attributes: ['id'],
+                }, {
+                    model: User,
+                    as: 'Followers',
+                    attributes: ['id'],
+                }]
+            })
+            return res.status(200).json(fullUserWithoutPassword); // 이제 프론트로 넘기기~
         })
     })(req, res, next)
 });
 
 router.post('/user/logout', (req, res, next) => {
-    console.log(req.user, res, next);
     req.logout();
     req.session.destroy();
     res.send('logout ok');

@@ -15,11 +15,11 @@ function loginAPI(data) {
 // 특이하다 loginAPI(action.data, a, b, c) 이 형식이 call쓰면 아래처럼 됨
 function* login(action) {
     try {
-        console.log(action)
+        console.log(action.data)
         const result = yield call(loginAPI, action.data)
         yield put({
             type: LOG_IN_SUCCESS,
-            data: result.data
+            data: result.data,
         });
     } catch (err) {
         yield put({
@@ -75,8 +75,7 @@ function logoutAPI() {
 
 function* logout() {
     try {
-        yield delay(1000)
-        // const result = yield call(logoutAPI)
+        yield call(logoutAPI);
         yield put({
             type: LOG_OUT_SUCCESS,
         });
@@ -96,7 +95,6 @@ function signUpAPI(data) {
 function* signUp(action) {
     try {
         const result = yield call(signUpAPI, action.data);
-        console.log(result)
         yield put({
             type: SIGN_UP_SUCCESS,
         });
