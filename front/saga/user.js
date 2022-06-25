@@ -4,7 +4,8 @@ import { LOG_IN_REQUEST , LOG_IN_SUCCESS, LOG_IN_FAILURE,
     LOG_OUT_REQUEST, LOG_OUT_SUCCESS, LOG_OUT_FAILURE, 
     SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE, FOLLOW_REQUEST,
     UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS,
-    FOLLOW_FAILURE, FOLLOW_SUCCESS,
+    FOLLOW_FAILURE, FOLLOW_SUCCESS, LOAD_MY_INFO_REQUEST,
+    LOAD_MY_INFO_FAILURE, LOAD_MY_INFO_SUCCESS
 } from '../reducers/user' 
 
 function loginAPI(data) {
@@ -22,9 +23,10 @@ function* login(action) {
             data: result.data,
         });
     } catch (err) {
+        console.log(err);
         yield put({
             type: LOG_IN_FAILURE,
-            data: err.response.data
+            data: err.response.data,
         })
     }
 }
@@ -70,7 +72,7 @@ function* unFollow(action) {
 }
 
 function logoutAPI() {
-    return axios.post('/api/logout')
+    return axios.post('/user/logout')
 }
 
 function* logout() {
@@ -80,6 +82,7 @@ function* logout() {
             type: LOG_OUT_SUCCESS,
         });
     } catch (err) {
+        console.log(err);
         yield put({
             type: LOG_OUT_FAILURE,
             error: err.response.data
@@ -107,6 +110,25 @@ function* signUp(action) {
     }
 }
 
+function loadMyInfoAPI() {
+    return axios.get('/user') // 쿠키라 데이터가 없데..
+}
+
+function* loadMyInfo(action) {
+    try {
+        const result = yield call(loadMyInfoAPI, action.data);
+        yield put({
+            type: LOAD_MY_INFO_SUCCESS,
+        });
+    } catch (err) {
+        console.log(err)
+        yield put({
+            type: LOAD_MY_INFO_FAILURE,
+            error: err.response.data
+        })
+    }
+}
+
 function* watchLogin() {
     yield takeLatest(LOG_IN_REQUEST, login)
 }
@@ -127,6 +149,10 @@ function* watchUnFollow() {
     yield takeLatest(UNFOLLOW_REQUEST, unFollow)
 }
 
+function* watchLoadUser() {
+    yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo)
+}
+
 export default function* userSaga() {
     yield all([
         fork(watchLogin),
@@ -134,5 +160,6 @@ export default function* userSaga() {
         fork(watchFollow),
         fork(watchUnFollow),
         fork(watchSigUp),
+        fork(watchLoadUser),
     ])
 }

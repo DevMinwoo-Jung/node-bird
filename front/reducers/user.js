@@ -1,6 +1,9 @@
 import produce from 'immer'
 
 export const initialState = {
+  loadMyInfoLoading: false,
+  loadMyInfoDone: false,
+  loadMyInfoError: null,
   followLoading: false, // 팔로우 시도중
   followDone: false,
   followError: null,
@@ -36,6 +39,10 @@ const dummyUser = (data) => ({
 export const LOG_IN_REQUEST = 'LOG_IN_REQUEST';
 export const LOG_IN_SUCCESS = 'LOG_IN_SUCCESS';
 export const LOG_IN_FAILURE = 'LOG_IN_FAILURE';
+
+export const LOAD_MY_INFO_REQUEST = 'LOAD_MY_INFO_REQUEST';
+export const LOAD_MY_INFO_SUCCESS = 'LOAD_MY_INFO_SUCCESS';
+export const LOAD_MY_INFO_FAILURE = 'LOAD_MY_INFO_FAILURE';
 
 export const LOG_OUT_REQUEST = 'LOG_OUT_REQUEST';
 export const LOG_OUT_SUCCESS = 'LOG_OUT_SUCCESS';
@@ -76,6 +83,20 @@ export const signUpSuccess = {
 export default (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
+      case LOG_IN_REQUEST: 
+      draft.logInLoading = true;
+      draft.logInError = null;
+      draft.logInDone = false;
+      break;
+  case LOG_IN_SUCCESS: 
+      draft.logInLoading = false;
+      draft.me = action.data;
+      draft.logInDone = true;
+      break;
+  case LOG_IN_FAILURE: 
+      draft.logInLoading = false;
+      draft.logInError = action.error;
+      break;
       case LOG_IN_REQUEST: 
           draft.logInLoading = true;
           draft.logInError = null;
