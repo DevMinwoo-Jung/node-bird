@@ -63,7 +63,7 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => { // post 
     } 
 })
 
-router.patch('/:postId/like', async (req, res, next) => { // PATCH /pst/1/like
+router.patch('/:postId/like', isLoggedIn, async (req, res, next) => { // PATCH /pst/1/like
     try {
         const post = await Post.findOne({
             where: { id: req.params.postId }
@@ -80,7 +80,7 @@ router.patch('/:postId/like', async (req, res, next) => { // PATCH /pst/1/like
 
 })
 
-router.delete('/:postId/like', async (req, res, next) => { // DELETE /post/1/like
+router.delete('/:postId/like', isLoggedIn, async (req, res, next) => { // DELETE /post/1/like
     try {
         const post = await Post.findOne({
             where: { id: req.params.postId }
@@ -90,6 +90,18 @@ router.delete('/:postId/like', async (req, res, next) => { // DELETE /post/1/lik
         }
         await post.removeLikers(req.user.id); // 이거 시퀄라이즈에서 알아서 만들어 주는거;
         res.json({ PostId: post.id, UserId: req.user.id})
+    } catch (error) {
+        console.error(error);
+        next(error)
+    }
+})
+
+router.delete('/:postId', isLoggedIn, async (req, res, next) => { // DELETE /post/1/like
+    try {
+        await Post.destroy({
+            where: { id: req.params.postId, userId: req.user.id }
+        })
+        res.json({ PostId: parseInt(req.params.postId, 10) })
     } catch (error) {
         console.error(error);
         next(error)

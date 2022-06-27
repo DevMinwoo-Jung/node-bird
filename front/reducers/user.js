@@ -160,11 +160,12 @@ export default (state = initialState, action) => {
         case CHANGE_NICKNAME_SUCCESS: 
             draft.changeNicknameLoading = false;
             draft.changeNicknameDone = true;
+            draft.me.nickname = action.data.nickname
             break;
         case CHANGE_NICKNAME_FAILURE: 
             draft.changeNicknameLoading = false;
             draft.changeNicknameError = action.error;
-            break;
+            break;  
         case UNFOLLOW_REQUEST: 
             draft.unfollowLoading = true;
             draft.unfollowDone = false;

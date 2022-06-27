@@ -1,11 +1,14 @@
-import { all, fork, put, delay, takeLatest, call } from 'redux-saga/effects';
+import { all, fork, put, takeLatest, call } from 'redux-saga/effects';
 import axios from 'axios';
 import { ADD_COMMENT_FAILURE, ADD_COMMENT_SUCCESS,
             ADD_POST_FAILURE, ADD_POST_SUCCESS,
             REMOVE_POST_SUCCESS, REMOVE_POST_FAILURE,
             LOAD_POST_FAILURE, LOAD_POST_SUCCESS,
             LIKE_POST_FAILURE, LIKE_POST_SUCCESS,
-            UNLIKE_POST_FAILURE, UNLIKE_POST_SUCCESS
+            UNLIKE_POST_FAILURE, UNLIKE_POST_SUCCESS,
+            ADD_POST_REQUEST, ADD_COMMENT_REQUEST,
+            LOAD_POST_REQUEST, LIKE_POST_REQUEST,
+            UNLIKE_POST_REQUEST, REMOVE_POST_REQUEST
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import shortid from 'shortid';
@@ -36,15 +39,15 @@ function* addPost(action) {
 }
 
 function removePostAPI(data) {
-    return axios.delete('/api/post', data)
+    return axios.delete(`/post/${data}`)
 }
 
 function* removePost(action) {
     try {
-        yield delay(1000)
+        const result = yield call(removePostAPI, action.data)
         yield put({
             type: REMOVE_POST_SUCCESS,
-            data: action.data,
+            data: result.data,
         });
         yield put({
             type: REMOVE_POST_OF_ME,
@@ -145,24 +148,26 @@ function* watchAddPost() {
 }
 
 function* watchCommentPost() {
-    yield takeLatest('ADD_COMMENT_REQUEST', addComment)
+    yield takeLatest(ADD_COMMENT_REQUEST, addComment)
 }
 
 function* watchRemovePost() {
-    yield takeLatest('REMOVE_POST_REQUEST', removePost)
+    yield takeLatest(REMOVE_POST_REQUEST, removePost)
 }
 
 function* watchLoadPost() {
-    yield takeLatest('LOAD_POST_REQUEST', loadPost)
+    yield takeLatest(LOAD_POST_REQUEST, loadPost)
 }
 
 function* watchLikePost() {
-    yield takeLatest('LIKE_POST_REQUEST', likePost)
+    yield takeLatest(LIKE_POST_REQUEST, likePost)
 }
 
 function* watchUnlikePost() {
-    yield takeLatest('UNLIKE_POST_REQUEST', unlikePost)
+    yield takeLatest(UNLIKE_POST_REQUEST, unlikePost)
 }
+
+
 
 export default function* rootSaga() {
     yield all([
@@ -172,5 +177,6 @@ export default function* rootSaga() {
         fork(watchLoadPost),
         fork(watchLikePost),
         fork(watchUnlikePost),
+
     ])
 }

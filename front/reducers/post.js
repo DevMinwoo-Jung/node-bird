@@ -20,6 +20,9 @@ export const initialState = {
   removePostLoading: false,
   removePostDone: false,
   removePostError: null,
+  changeNicknameLoading: false,
+  changeNicknameDone: false,
+  changeNicknameError: null,
   loadPostLoading: false,
   loadPostDone: false,
   loadPostError: null,
@@ -228,7 +231,7 @@ export default (state = initialState, action) => {
       case REMOVE_POST_SUCCESS: 
         draft.removePostLoading = false;
         draft.removePostDone = true;
-        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.data)
+        draft.mainPosts = draft.mainPosts.filter((v) => v.id !== action.PostId)
         break;
       case REMOVE_POST_FAILURE: 
         draft.removePostLoading = false;

@@ -8,7 +8,7 @@ import { LOAD_MY_INFO_REQUEST } from "../reducers/user";
 
 const Home = () => {
     const { me } = useSelector((state) => state.user)
-    const { mainPosts, hasMorePost, loadPostsLoading } = useSelector((state) => state.post)
+    const { mainPosts, hasMorePost, loadPostsLoading, removePostDone } = useSelector((state) => state.post)
 
     const dispatch = useDispatch()
 

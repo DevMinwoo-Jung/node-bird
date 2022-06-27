@@ -5,7 +5,8 @@ import { LOG_IN_REQUEST , LOG_IN_SUCCESS, LOG_IN_FAILURE,
     SIGN_UP_REQUEST, SIGN_UP_SUCCESS, SIGN_UP_FAILURE, FOLLOW_REQUEST,
     UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS,
     FOLLOW_FAILURE, FOLLOW_SUCCESS, LOAD_MY_INFO_REQUEST,
-    LOAD_MY_INFO_FAILURE, LOAD_MY_INFO_SUCCESS
+    LOAD_MY_INFO_FAILURE, LOAD_MY_INFO_SUCCESS, CHANGE_NICKNAME_FAILURE,
+    CHANGE_NICKNAME_SUCCESS, CHANGE_NICKNAME_REQUEST
 } from '../reducers/user' 
 
 function loginAPI(data) {
@@ -130,6 +131,26 @@ function* loadMyInfo(action) {
     }
 }
 
+function changeNickNameAPI(data) {
+    return axios.patch(`/user/nickname`, { nickname: data }) // 쿠키라 데이터가 없데..
+}
+
+function* changeNickName(action) {
+    try {
+        const result = yield call(changeNickNameAPI, action.data);
+        yield put({
+            type: CHANGE_NICKNAME_SUCCESS,
+            data: result.data
+        });
+    } catch (err) {
+        console.log(err)
+        yield put({
+            type: CHANGE_NICKNAME_FAILURE,
+            error: err.response.data
+        })
+    }
+}
+
 function* watchLogin() {
     yield takeLatest(LOG_IN_REQUEST, login)
 }
@@ -154,6 +175,10 @@ function* watchLoadUser() {
     yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo)
 }
 
+function* watchChangeNicknamePost() {
+    yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickName)
+}
+
 export default function* userSaga() {
     yield all([
         fork(watchLogin),
@@ -162,5 +187,6 @@ export default function* userSaga() {
         fork(watchUnFollow),
         fork(watchSigUp),
         fork(watchLoadUser),
+        fork(watchChangeNicknamePost),
     ])
 }
