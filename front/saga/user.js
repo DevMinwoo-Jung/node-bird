@@ -6,7 +6,11 @@ import { LOG_IN_REQUEST , LOG_IN_SUCCESS, LOG_IN_FAILURE,
     UNFOLLOW_FAILURE, UNFOLLOW_REQUEST, UNFOLLOW_SUCCESS,
     FOLLOW_FAILURE, FOLLOW_SUCCESS, LOAD_MY_INFO_REQUEST,
     LOAD_MY_INFO_FAILURE, LOAD_MY_INFO_SUCCESS, CHANGE_NICKNAME_FAILURE,
-    CHANGE_NICKNAME_SUCCESS, CHANGE_NICKNAME_REQUEST
+    CHANGE_NICKNAME_SUCCESS, CHANGE_NICKNAME_REQUEST, LOAD_FOLLOWERS_REQUEST,
+    LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE,  LOAD_FOLLOWINGS_REQUEST,
+    LOAD_FOLLOWINGS_FAILURE, LOAD_FOLLOWINGS_SUCCESS, REMOVE_FOLLOWER_REQUEST,
+    REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_SUCCESS
+
 } from '../reducers/user' 
 
 function loginAPI(data) {
@@ -32,17 +36,18 @@ function* login(action) {
     }
 }
 
-function followAPI() {
-    return axios.post('/api/login')
+function followAPI(data) {
+    return axios.patch(`user/${data}/follow`)
 }
 
 // 특이하다 loginAPI(action.data, a, b, c) 이 형식이 call쓰면 아래처럼 됨
 function* follow(action) {
     try {
-        yield delay(1000) // 비동기적 효과 주려공
+//        yield delay(1000) // 비동기적 효과 주려공 
+        const result = yield call(followAPI, action.data);
         yield put({
             type: FOLLOW_SUCCESS,
-            data: action.data
+            data: result.data
         });
     } catch (err) {
         yield put({
@@ -52,17 +57,17 @@ function* follow(action) {
     }
 }
 
-function unFollowAPI() {
-    return axios.post('/api/login')
+function unFollowAPI(data) {
+    return axios.delete(`/user/${data}/follow`)
 }
 
 // 특이하다 loginAPI(action.data, a, b, c) 이 형식이 call쓰면 아래처럼 됨
 function* unFollow(action) {
     try {
-        yield delay(1000) // 비동기적 효과 주려공
+        const result = yield call(unFollowAPI, action.data);
         yield put({
             type: UNFOLLOW_SUCCESS,
-            data: action.data
+            data: result.data
         });
     } catch (err) {
         yield put({
@@ -151,6 +156,67 @@ function* changeNickName(action) {
     }
 }
 
+function loadFollowersAPI(data) {
+    return axios.get(`/user/followers`, { nickname: data }) // 쿠키라 데이터가 없데..
+}
+
+function* loadFollowers(action) {
+    try {
+        const result = yield call(loadFollowersAPI, action.data);
+        yield put({
+            type: LOAD_FOLLOWERS_SUCCESS,
+            data: result.data
+        });
+    } catch (err) {
+        console.log(err)
+        yield put({
+            type: LOAD_FOLLOWERS_FAILURE,
+            error: err.response.data
+        })
+    }
+}
+
+function loadFollwingsAPI(data) {
+    return axios.get(`/user/followings`, { nickname: data }) // 쿠키라 데이터가 없데..
+}
+
+function* loadFollwings(action) {
+    try {
+        const result = yield call(loadFollwingsAPI, action.data);
+        yield put({
+            type: LOAD_FOLLOWINGS_SUCCESS,
+            data: result.data
+        });
+    } catch (err) {
+        console.log(err)
+        yield put({
+            type: LOAD_FOLLOWINGS_FAILURE,
+            error: err.response.data
+        })
+    }
+}
+
+
+function removeFollowersAPI(data) {
+    return axios.delete(`/user/follower/${data}`, data) // 쿠키라 데이터가 없데..
+}
+
+function* removeFollowers(action) {
+    try {
+        const result = yield call(removeFollowersAPI, action.data);
+        yield put({
+            type: REMOVE_FOLLOWER_SUCCESS,
+            data: result.data
+        });
+    } catch (err) {
+        console.log(err)
+        yield put({
+            type: REMOVE_FOLLOWER_FAILURE,
+            error: err.response.data
+        })
+    }
+}
+
 function* watchLogin() {
     yield takeLatest(LOG_IN_REQUEST, login)
 }
@@ -179,6 +245,18 @@ function* watchChangeNicknamePost() {
     yield takeLatest(CHANGE_NICKNAME_REQUEST, changeNickName)
 }
 
+function* watchLoadFollowingsPost() {
+    yield takeLatest(LOAD_FOLLOWINGS_REQUEST, loadFollwings)
+}
+
+function* watchLoadFollowersPost() {
+    yield takeLatest(LOAD_FOLLOWERS_REQUEST, loadFollowers)
+}
+
+function* watchRemoveFollower() {
+    yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollowers)
+}
+
 export default function* userSaga() {
     yield all([
         fork(watchLogin),
@@ -188,5 +266,8 @@ export default function* userSaga() {
         fork(watchSigUp),
         fork(watchLoadUser),
         fork(watchChangeNicknamePost),
+        fork(watchLoadFollowingsPost),
+        fork(watchLoadFollowersPost),
+        fork(watchRemoveFollower),
     ])
 }

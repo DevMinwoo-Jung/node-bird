@@ -133,4 +133,75 @@ router.patch('/nickname', isLoggedIn, async (req, res, next) => {
     }
 })
 
+router.patch('/:userId/follow', isLoggedIn, async (req, res, next) => { // Patch/user/1/follow
+    try {
+        const user = await User.findOne({ where: { id: req.params.userId }});
+        if (!user) {
+            res.status(403).send('cannot follow');
+        }
+        await user.addFollowers(req.user.id);
+        res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
+    } catch (error) {
+        console.error(error);
+        next(error); 
+    }
+})
+
+router.delete('/:userId/follow', isLoggedIn, async (req, res, next) => { // delete/user/1/follow
+    try {
+        const user = await User.findOne({ where: { id: req.params.userId }});
+        if (!user) {
+            res.status(403).send('cannot unfollow');
+        }
+        await user.removeFollowers(req.user.id);
+        res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
+
+router.delete('/follower/:userId', isLoggedIn, async (req, res, next) => { // delete/user/1/follow
+    try {
+        const user = await User.findOne({ where: { id: req.user.id }});
+        if (!user) {
+            res.status(403).send('cannot unfollow');
+        }
+        await user.removeFollowings(req.user.id);
+        res.status(200).json({ UserId: parseInt(req.params.userId, 10) });
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
+
+router.get('/followers', isLoggedIn, async (req, res, next) => { // get/ user/followers
+    try {
+        const user = await User.findOne({ where: { id: req.user.id }});
+        if (!user) {
+            res.status(403).send('cannot get followers');
+        }
+        const followers = await user.getFollowers();
+        res.status(200).json(followers);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
+
+router.get('/followings', isLoggedIn, async (req, res, next) => { // get/ user/followings
+    try {
+        const user = await User.findOne({ where: { id: req.user.id }});
+        if (!user) {
+            res.status(403).send('cannot get followings');
+        }
+        const followings = await user.getFollowings();
+        res.status(200).json(followings);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
+
+
 module.exports = router;
