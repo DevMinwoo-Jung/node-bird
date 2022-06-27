@@ -18,7 +18,11 @@ router.get('/', async (req, res, next) => {
                 include: [{
                     model: User,
                     attributes: ['id', 'nickname']
-                }]
+                }],
+            }, {
+                model: User, // 좋아요 누른 사람
+                as: 'Likers',
+                attributes: ['id'],
             }],
             // 이걸 실무에서는 안쓰는데 그 이유는 사람이 중간에 있는 게시물을 삭제한다면 문제가 생긴다
             // 1, 2, 3, 4, 5, 6, 7, 8, 9, 10.....

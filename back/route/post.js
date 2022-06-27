@@ -11,8 +11,7 @@ router.post('/', isLoggedIn, async (req, res, next) => { // post /post
         }); 
         const fullPost = await Post.findOne({ 
             where: { id: post.id },   
-            include: [
-            {
+            include: [{
                 model: Image,
             }, {
                 model: Comment,
@@ -64,8 +63,37 @@ router.post('/:postId/comment', isLoggedIn, async (req, res, next) => { // post 
     } 
 })
 
-router.delete('/', (req, res) => {
-    res.send('hello API!')
+router.patch('/:postId/like', async (req, res, next) => { // PATCH /pst/1/like
+    try {
+        const post = await Post.findOne({
+            where: { id: req.params.postId }
+        })
+        if (!post) {
+            return res.send(403).send('cannot like');
+        }
+        await post.addLikers(req.user.id); // 이거 시퀄라이즈에서 알아서 만들어 주는거;
+        res.json({ PostId: post.id, UserId: req.user.id})
+    } catch (error) {
+        console.error(error);
+        next(error)
+    }
+
+})
+
+router.delete('/:postId/like', async (req, res, next) => { // DELETE /post/1/like
+    try {
+        const post = await Post.findOne({
+            where: { id: req.params.postId }
+        })
+        if (!post) {
+            return res.send(403).send('cannot unlike');
+        }
+        await post.removeLikers(req.user.id); // 이거 시퀄라이즈에서 알아서 만들어 주는거;
+        res.json({ PostId: post.id, UserId: req.user.id})
+    } catch (error) {
+        console.error(error);
+        next(error)
+    }
 })
 
 module.exports = router;
