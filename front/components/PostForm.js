@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef } from 'react';
 import {Button, Form, Input} from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import { addPost } from "../reducers/post";
+import { ADD_POST_REQUEST } from "../reducers/post";
 import useInput from '../hooks/useInput';
 
 const PostForm = () => {
@@ -20,15 +20,16 @@ const PostForm = () => {
         }
     }, [addPostDone]);
 
-    const onSubmit = useCallback(() => {
-        console.log('여긴성공')
-        console.log(text)
-        dispatch(addPost(text))
-    }, [text])
+    const onSubmitForm = useCallback(() => {
+        dispatch({
+            type: ADD_POST_REQUEST,
+            data: text,
+        });
+    }, [text]);
 
 
     return (
-        <Form style={{ margin: '10px 0 20px' }} encType="multipart/form-data" onFinish={onSubmit}>
+        <Form style={{ margin: '10px 0 20px' }} encType="multipart/form-data" onFinish={onSubmitForm}>
         <Input.TextArea
             value={text}
             onChange={onChangeText}

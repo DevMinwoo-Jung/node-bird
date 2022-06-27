@@ -119,6 +119,7 @@ function* loadMyInfo(action) {
         const result = yield call(loadMyInfoAPI, action.data);
         yield put({
             type: LOAD_MY_INFO_SUCCESS,
+            data: result.data
         });
     } catch (err) {
         console.log(err)
@@ -148,7 +149,7 @@ function* watchFollow() {
 function* watchUnFollow() {
     yield takeLatest(UNFOLLOW_REQUEST, unFollow)
 }
-
+ 
 function* watchLoadUser() {
     yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo)
 }

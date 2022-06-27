@@ -152,8 +152,8 @@ export default (state = initialState, action) => {
       case LOAD_POST_SUCCESS:
         draft.loadPostLoading = false;
         draft.loadPostDone = true;
-        draft.mainPosts = action.data.concat(draft.mainPosts);
-        draft.hasMorePost = draft.mainPosts.length < 50;
+        draft.mainPosts = draft.mainPosts.concat(action.data);
+        draft.hasMorePost = action.data.length === 10;
         break;
       case LOAD_POST_FAILURE:
         draft.loadPostLoading = false;
@@ -167,7 +167,8 @@ export default (state = initialState, action) => {
       case ADD_POST_SUCCESS: 
         draft.addPostLoading = false;
         draft.addPostDone = true;
-        draft.mainPosts.unshift(action.data)
+        draft.mainPosts.unshift(action.data);
+        draft.imagePaths = [];
         break;
       case ADD_POST_FAILURE: 
         draft.addPostLoading = false;

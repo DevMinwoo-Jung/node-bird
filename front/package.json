@@ -1,7 +1,6 @@
 {
-  "name": "react-nodebird-front",
+  "name": "ls",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "dev": "next -p 3060",
@@ -31,5 +30,6 @@
     "faker": "^5.5.3",
     "nodemon": "^2.0.4",
     "webpack": "^4.44.2"
-  }
+  },
+  "description": ""
 }

@@ -7,6 +7,8 @@ module.exports = (sequelize, DataType) => {
             allowNull: false, // 필수
         },
     }, {
+        modelName: 'Comment',
+        tableName: 'comments',
         charset: 'utf8mb4',
         collate: 'utf8mb4_general_ci', //한글, 이모티콘 저장
     });
@@ -14,7 +16,7 @@ module.exports = (sequelize, DataType) => {
     // postId 3 같은 고유한 것이 생김
     Comment.associate = (db) => {
         db.Comment.belongsTo(db.User);
-        db.Comment.hasMany(db.Comment);
+        db.Comment.belongsTo(db.Post);
     };
     return Comment;
 }

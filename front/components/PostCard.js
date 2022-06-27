@@ -19,8 +19,8 @@ const CardWrapper = styled.div`
 const PostCard = ({ post }) => {
     const [commentFormOpened, setCommentFormOpened] = useState(false);
     const id = useSelector((state) => state.user.me && state.user.me.id);
-    const dispatch = useDispatch()
-    const { removePostLoading } = useSelector((state) => state.post) 
+    const dispatch = useDispatch();
+    const { removePostLoading } = useSelector((state) => state.post);
 
     const [liked, setLiked] = useState(false);
 
@@ -37,7 +37,7 @@ const PostCard = ({ post }) => {
             type: REMOVE_POST_REQUEST,
             data: post.id,
         })
-    }, [])
+    }, []) 
 
     return (
         <CardWrapper key={post.id}>
@@ -108,7 +108,7 @@ PostCard.propTypes = {
         User: PropTypes.object,
         UserId: PropTypes.number,
         content: PropTypes.string,
-        createdAt: PropTypes.object,
+        createdAt: PropTypes.string,
         Comments: PropTypes.arrayOf(PropTypes.any),
         Images: PropTypes.arrayOf(PropTypes.any),
         }).isRequired,
