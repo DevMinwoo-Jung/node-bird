@@ -15,8 +15,12 @@ import { ADD_COMMENT_FAILURE, ADD_COMMENT_SUCCESS,
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import shortid from 'shortid';
 
+// function addPostAPI(data) {
+//     return axios.post('/post', { content: data }) // 이렇게 해 주는게 req.body에 content에 접근 하려고 없으면 접근이 안될껄..?
+// }                                                    formData는 이렇게 json으로 하면 안됨
+
 function addPostAPI(data) {
-    return axios.post('/post', { content: data }) // 이렇게 해 주는게 req.body에 content에 접근 하려고 없으면 접근이 안될껄..?
+    return axios.post('/post', data) // 이렇게 해 주는게 req.body에 content에 접근 하려고 없으면 접근이 안될껄..?
 }
 
 function* addPost(action) {

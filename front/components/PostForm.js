@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef } from 'react';
 import {Button, Form, Input} from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import { ADD_POST_REQUEST, UPLOAD_IMAGES_REQUEST } from "../reducers/post";
+import { ADD_POST_REQUEST, UPLOAD_IMAGES_REQUEST, REMOVE_IMAGE } from "../reducers/post";
 import useInput from '../hooks/useInput';
 
 const PostForm = () => {
@@ -32,13 +32,27 @@ const PostForm = () => {
         })
     },[])
 
-    const onSubmitForm = useCallback((e) => {
-
+    const onSubmitForm = useCallback(() => {
+        if (!text || !text.trim()) {
+            return alert('게시글을 작성하세요.');
+        }
+        const formData = new FormData();
+        imagePaths.forEach((p) => {
+            formData.append('image', p);
+        });
+        formData.append('content', text);
         dispatch({
             type: ADD_POST_REQUEST,
-            data: text,
+            data: formData,
         });
-    }, [text]);
+    }, [text, imagePaths]);
+
+    const onRemoveImage = useCallback((index) => () => {
+        dispatch({
+            type: REMOVE_IMAGE,
+            data: index
+        })
+    })
 
     return (
         <Form style={{ margin: '10px 0 20px' }} name="image" encType="multipart/form-data" onFinish={onSubmitForm}>
@@ -53,9 +67,9 @@ const PostForm = () => {
             <Button type='primary' style={{float: 'right'}} htmlType='submit' loading={addPostLoading}>twit twit</Button>
         </div>
         <div>
-            {imagePaths.map((v) => (<div key={v} style={{display: 'inline-block'}}>
-                <img src={v} style={{width: '200px'}} alt={v}/>
-                <div>제거</div>
+            {imagePaths.map((v, i) => (<div key={v} style={{display: 'inline-block'}}>
+                <img src={`http://localhost:3065/${v}`} style={{width: '200px'}} alt={v}/>
+                <button onClick={onRemoveImage(i)}>제거</button>
             </div>))}
         </div>
     </Form>);
