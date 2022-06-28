@@ -4,7 +4,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs'); // 파일 시스템
 
-const { Post, User, Image, Comment } = require('../models');
+const { Post, User, Image, Comment, Hashtag } = require('../models');
 const { isLoggedIn } = require('./middlewares');
 
 try {
@@ -31,10 +31,17 @@ const uploads = multer({
 
 router.post('/', isLoggedIn, uploads.none(), async (req, res, next) => { // post /post
     try {
+        const hashtags = req.body.content.match(/(#[^\s#]+)/g);
         const post = await Post.create({ 
             content: req.body.content,
             UserId: req.user.id,
-        }); 
+        });
+        if (hashtags) {
+            const result = await Promise.all(hashtags.map((tag) => Hashtag.findOrCreate({
+                where: { name: tag.slice(1).toLowerCase() }, 
+            }))) // [#노드, true], [#리액트, true] 이런식으로 나옴
+            await post.addHashtags(result.map((y) => y[0]))
+        } // 있으면 가져오고 없으면 등록 
         if (req.body.image) {
             if (Array.isArray(req.body.image)) { // 이미지 여러 개 올리면 image: [1.png, 2.png....]
                 const images = await Promise.all(req.body.image.map((image) => { // db에는 파일 주소만 올리지 파일 자체를 올리는게 아니다!
@@ -147,6 +154,67 @@ router.delete('/:postId', isLoggedIn, async (req, res, next) => { // DELETE /pos
 router.post('/images', isLoggedIn, uploads.array('image'), async (req, res, next) => { // post /images
     console.log(req.files);
     res.json(req.files.map((v) => v.filename));
+})
+
+router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => { // post /post/retweet
+    try {
+        const post = await Post.findOne({
+            where: { id: req.params.postId },
+            include: [{
+            model: Post,
+            as: 'Retweet',
+            }],
+        });
+        if (!post) {
+            return res.status(403).send('존재하지 않는 게시글입니다.');
+        }
+        if (req.user.id === post.UserId || (post.Retweet && post.Retweet.UserId === req.user.id)) {
+            return res.status(403).send('자신의 글은 리트윗할 수 없습니다.');
+        }
+        const retweetTargetId = post.RetweetId || post.id;
+        const exPost = await Post.findOne({
+            where: {
+            UserId: req.user.id,
+            RetweetId: retweetTargetId,
+            },
+        });
+        if (exPost) {
+            return res.status(403).send('이미 리트윗했습니다.');
+        }
+        const retweet = await Post.create({
+            RetweetId: retweetTargetId,
+            content: 'retweet',
+            UserId: req.user.id,
+        });
+        const retweetWithPrevPost = await Post.findOne({
+            where: { id: retweet.id },
+            include: [{
+            model: Post,
+            as: 'Retweet',
+            include: [{
+                model: User,
+                attributes: ['id', 'nickname'],
+            }, {
+                model: Image,
+            }]
+        }, {
+            model: User,
+            attributes: ['id', 'nickname'],
+        }, {
+            model: Image,
+        }, {
+            model: Comment,
+            include: [{
+                model: User,
+                attributes: ['id', 'nickname'],
+            }],
+        }],
+        })
+        res.status(201).json(retweetWithPrevPost);
+    } catch (error) {
+        console.error(error);
+        next(error);
+    } 
 })
 
 module.exports = router;

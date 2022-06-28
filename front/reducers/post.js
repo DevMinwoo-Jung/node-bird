@@ -29,6 +29,9 @@ export const initialState = {
   uploadImagesLoading: false,
   uploadImagesDone: false,
   uploadImagesError: null,
+  retweetPostLoading: false,
+  retweetPostDone: false,
+  retweetPostError: null,
   hasMorePost: true,
 };
 
@@ -134,6 +137,10 @@ export const ADD_COMMENT_REQUEST = 'ADD_COMMENT_REQUEST'
 export const ADD_COMMENT_SUCCESS = 'ADD_COMMENT_SUCCESS'
 export const ADD_COMMENT_FAILURE = 'ADD_COMMENT_FAILURE'
 
+export const RETWEET_POST_REQUEST = 'RETWEET_POST_REQUEST'
+export const RETWEET_POST_SUCCESS = 'RETWEET_POST_SUCCESS'
+export const RETWEET_POST_FAILURE = 'RETWEET_POST_FAILURE'
+
 export const REMOVE_IMAGE = 'REMOVE_IMAGE'
 
 export const addPost = (data) => ({
@@ -173,6 +180,20 @@ export default (state = initialState, action) => {
       case REMOVE_IMAGE: 
         draft.imagePaths = draft.imagePaths.filter((y, i) => i !== action.data)
         break;
+      case RETWEET_POST_REQUEST:
+        draft.retweetPostLoading = true;
+        draft.retweetPostDone = false;
+        draft.retweetPostError = null;
+        break;
+      case RETWEET_POST_SUCCESS: 
+        draft.mainPosts.unshift(action.data);
+        draft.retweetPostLoading = false;
+        draft.retweetPostDone = true;
+        break;
+      case RETWEET_POST_FAILURE:
+        draft.retweetPostLoading = false;
+        draft.retweetPostError = action.error;
+        break;    
       case UPLOAD_IMAGES_REQUEST:
         draft.uploadImagesLoading = true;
         draft.uploadImagesDone = false;

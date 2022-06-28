@@ -13,7 +13,7 @@ module.exports = (sequelize, DataType) => {
         collate: 'utf8mb4_general_ci', //한글, 이모티콘 저장
     });
     Hashtag.associate = (db) => {
-        db.Hashtag.belongsToMany(db.Post, { through: 'PostHashTag'})
+        db.Hashtag.belongsToMany(db.Post, { through: 'PostHashtag' });
     };
     return Hashtag;
 }
