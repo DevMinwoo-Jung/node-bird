@@ -8,7 +8,9 @@ import { ADD_COMMENT_FAILURE, ADD_COMMENT_SUCCESS,
             UNLIKE_POST_FAILURE, UNLIKE_POST_SUCCESS,
             ADD_POST_REQUEST, ADD_COMMENT_REQUEST,
             LOAD_POST_REQUEST, LIKE_POST_REQUEST,
-            UNLIKE_POST_REQUEST, REMOVE_POST_REQUEST
+            UNLIKE_POST_REQUEST, REMOVE_POST_REQUEST,
+            UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_REQUEST,
+            UPLOAD_IMAGES_SUCCESS
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import shortid from 'shortid';
@@ -143,6 +145,26 @@ function* loadPost(action) {
     }
 }
 
+function uploadImagesAPI(data) {
+    return axios.post(`/post/images`, data)
+}
+
+function* uploadImage(action) {
+    try {
+        const result = yield call(uploadImagesAPI, action.data);
+        yield put({
+        type: UPLOAD_IMAGES_SUCCESS,
+        data: result.data,
+        })
+    } catch (err) {
+        console.log(err)
+        yield put({
+        type: UPLOAD_IMAGES_FAILURE,
+        data: err.response.data,
+        });
+    }
+}
+
 function* watchAddPost() {
     yield takeLatest('ADD_POST_REQUEST', addPost)
 }
@@ -167,7 +189,9 @@ function* watchUnlikePost() {
     yield takeLatest(UNLIKE_POST_REQUEST, unlikePost)
 }
 
-
+function* watchUploadImagesPost() {
+    yield takeLatest(UPLOAD_IMAGES_REQUEST, uploadImage)
+}
 
 export default function* rootSaga() {
     yield all([
@@ -177,6 +201,6 @@ export default function* rootSaga() {
         fork(watchLoadPost),
         fork(watchLikePost),
         fork(watchUnlikePost),
-
+        fork(watchUploadImagesPost),
     ])
 }

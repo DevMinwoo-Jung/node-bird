@@ -1,7 +1,18 @@
 const express = require('express');
-const { Post, User, Image, Comment } = require('../models');
-const { isLoggedIn } = require('./middlewares')
 const router = express.Router();
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs'); // 파일 시스템
+
+const { Post, User, Image, Comment } = require('../models');
+const { isLoggedIn } = require('./middlewares');
+
+try {
+    fs.accessSync('uploads');
+} catch (error) {
+    console.log('upload 없어서 생성');
+    fs.mkdirSync('uploads');
+}
 
 router.post('/', isLoggedIn, async (req, res, next) => { // post /post
     try {
@@ -106,6 +117,26 @@ router.delete('/:postId', isLoggedIn, async (req, res, next) => { // DELETE /pos
         console.error(error);
         next(error)
     }
+})
+
+
+// form 마다 다를 수 있어서 따로 해줘야한다
+const upload = multer({
+    storage: multer.diskStorage({
+        destination(req, file, done) {
+            done(null, 'upload');
+        },
+        filename(req, file, done) { // 중복 방지
+            const ext = path.extname(file.originalname); // 확장자 추줄
+            const basename = path.basename(file.originalname, ext)  // 이름 주출
+            done(null, basename + new Date().getTime() + ext); // 민우 213213.png
+        }
+    }),
+    limits: { fileSize: 20 * 1024 * 1024 } // 20mb
+})// array인 이유가 여러 장 일수도 있어서, text는 none, 한장이면 single
+router.post('/images', isLoggedIn, upload.array('image'), async (req, res, next) => { // post /images
+    console.log(req.files);
+    res.json(req.files.map((v) => v.filename));
 })
 
 module.exports = router;

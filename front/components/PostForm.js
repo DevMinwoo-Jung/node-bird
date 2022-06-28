@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useRef } from 'react';
 import {Button, Form, Input} from "antd";
 import {useDispatch, useSelector} from "react-redux";
-import { ADD_POST_REQUEST } from "../reducers/post";
+import { ADD_POST_REQUEST, UPLOAD_IMAGES_REQUEST } from "../reducers/post";
 import useInput from '../hooks/useInput';
 
 const PostForm = () => {
@@ -10,7 +10,7 @@ const PostForm = () => {
     const { imagePaths, addPostLoading, addPostDone } = useSelector((state) => state.post);
     const [text, onChangeText, setText] = useInput('')
 
-    const onClickImageUpload = useCallback(() => {
+    const onClickImageUploads = useCallback(() => {
         imageInput.current.click()
     }, [imageInput.current])
 
@@ -20,7 +20,20 @@ const PostForm = () => {
         }
     }, [addPostDone]);
 
-    const onSubmitForm = useCallback(() => {
+    const onChangeImages = useCallback((e) => {
+        console.log('images', e.target.files)
+        const imageFormData = new FormData();
+        [].forEach.call(e.target.files, (f) => {
+            imageFormData.append('image', f)
+        })
+        dispatch({
+            type: UPLOAD_IMAGES_REQUEST,
+            data: imageFormData
+        })
+    },[])
+
+    const onSubmitForm = useCallback((e) => {
+
         dispatch({
             type: ADD_POST_REQUEST,
             data: text,
@@ -28,15 +41,15 @@ const PostForm = () => {
     }, [text]);
 
     return (
-        <Form style={{ margin: '10px 0 20px' }} encType="multipart/form-data" onFinish={onSubmitForm}>
+        <Form style={{ margin: '10px 0 20px' }} name="image" encType="multipart/form-data" onFinish={onSubmitForm}>
         <Input.TextArea
             value={text}
             onChange={onChangeText}
             maxLength={140}
             placeholder="어떤 일이 있나요?"/>
         <div>
-            <input type='file' multiple hidden ref={imageInput}/>
-            <Button onClick={onClickImageUpload}>이미지 업로드</Button>
+            <input type='file' multiple hidden ref={imageInput} onChange={onChangeImages}/>
+            <Button onClick={onClickImageUploads}>이미지 업로드</Button>
             <Button type='primary' style={{float: 'right'}} htmlType='submit' loading={addPostLoading}>twit twit</Button>
         </div>
         <div>
