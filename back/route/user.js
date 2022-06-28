@@ -163,7 +163,7 @@ router.delete('/:userId/follow', isLoggedIn, async (req, res, next) => { // dele
 
 router.delete('/follower/:userId', isLoggedIn, async (req, res, next) => { // delete/user/1/follow
     try {
-        const user = await User.findOne({ where: { id: req.user.id }});
+        const user = await User.findOne({ where: { id: req.params.userId }});
         if (!user) {
             res.status(403).send('cannot unfollow');
         }

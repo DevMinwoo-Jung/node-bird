@@ -224,7 +224,7 @@ export default (state = initialState, action) => {
         case REMOVE_FOLLOWER_SUCCESS: 
             draft.removeFollowerLoading = false;
             draft.removeFollowerDone = true;
-            draft.me.Followings = draft.me.Followers.filter((v) => v.id !== action.data.UserId)
+            draft.me.Followers = draft.me.Followers.filter((v) => v.id !== action.data.UserId)
             break;
         case REMOVE_FOLLOWER_FAILURE: 
             draft.removeFollowerLoading = false;

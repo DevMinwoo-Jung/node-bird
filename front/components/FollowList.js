@@ -9,6 +9,7 @@ import { UNFOLLOW_REQUEST, REMOVE_FOLLOWER_REQUEST } from '../reducers/user';
 const FollowList = ({ header, data }) => {
   const dispatch = useDispatch();
   // 반복문 안에서 데이터를 보낼때는 고차함수!
+  console.log(header)
   const onCancel = (id) => () => {
     if (header === '팔로잉') {
       dispatch({
