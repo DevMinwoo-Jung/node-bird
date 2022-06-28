@@ -130,13 +130,13 @@ function* unlikePost(action) {
     }
 }
 
-function loadPostAPI(data) {
-    return axios.get(`/posts`, data)
+function loadPostAPI(lastId) {
+    return axios.get(`/posts?lastId=${lastId || 0}`);
 }
 
 function* loadPost(action) {
     try {
-        const result = yield call(loadPostAPI, action.data);
+        const result = yield call(loadPostAPI, action.lastId);
         yield put({
         type: LOAD_POST_SUCCESS,
         data: result.data,
@@ -190,7 +190,7 @@ function* retweetPost(action) {
 }
 
 function* watchAddPost() {
-    yield takeLatest('ADD_POST_REQUEST', addPost)
+    yield takeLatest(ADD_POST_REQUEST, addPost)
 }
 
 function* watchCommentPost() {

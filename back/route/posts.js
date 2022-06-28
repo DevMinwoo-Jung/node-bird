@@ -1,10 +1,16 @@
 const express = require('express');
 const { Post, User, Image, Comment } = require('../models')
 const router = express.Router();
+const { Op } = require('sequelize')
 
 router.get('/', async (req, res, next) => {
     try {
+        const where = {};
+        if (parseInt(req.query.lastId, 10)) { // 초기 로딩이 아닐 때 여기 실행
+            where.id ={ [Op.lt ]: parseInt(req.query.lastId, 10)} // 21 ~~~ 1 중 9, 8, 7.... 1 즉 lastId보다 작은 것만 가져와라 !
+        }
         const posts = await Post.findAll({ // GET /posts
+            where,
             limit: 10, // 10 개만 가져와
             // offset: 0, // 1 ~ 10번 게시글을 가져와
             order: [['createdAt', 'DESC'], [Comment, 'createdAt', 'DESC']], // 2차원 배열이 여러 기준으로 배열을 정리할수 있어서

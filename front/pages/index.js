@@ -31,9 +31,10 @@ const Home = () => {
         function onScroll() {
             if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
                 if (hasMorePost && !loadPostsLoading) {
+                    const lastId = mainPosts[mainPosts.length - 1]?.id;
                     dispatch({
                 type: LOAD_POST_REQUEST,
-                data: mainPosts[mainPosts.length - 1].id,
+                lastId,
                     });
                 }
             }
