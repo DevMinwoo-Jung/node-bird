@@ -14,7 +14,7 @@ const about = () => {
     return (
         <AppLayout>
             <Head>
-            <title>ZeroCho | NodeBird</title>
+            <title>Minwoo | NodeBird</title>
             </Head>
                 {userInfo
             ? (
@@ -53,7 +53,7 @@ export const getStaticProps = wrapper.getStaticProps(async (context) => {
     console.log('getStaticProps');
     context.store.dispatch({
         type: LOAD_USER_REQUEST,
-        data: 1,
+        data: context.params.id,
     });
     context.store.dispatch(END);
     await context.store.sagaTask.toPromise();

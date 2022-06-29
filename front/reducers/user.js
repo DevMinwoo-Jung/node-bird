@@ -37,6 +37,7 @@ export const initialState = {
     me: null,
     signUpData: {},
     loginData: {},
+    userInfo: null
     };
 
     const dummyUser = (data) => ({
@@ -93,8 +94,8 @@ export const REMOVE_FOLLOWER_SUCCESS = 'REMOVE_FOLLOWER_SUCCESS';
 export const REMOVE_FOLLOWER_FAILURE = 'REMOVE_FOLLOWER_FAILURE';
 
 
-export const ADD_POST_TO_ME = 'ADD_POST_TO_ME'
-export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME'
+export const ADD_POST_TO_ME = 'ADD_POST_TO_ME';
+export const REMOVE_POST_OF_ME = 'REMOVE_POST_OF_ME';
 
 export const loginRequestAction = (data) => ({
     type: LOG_IN_REQUEST,
@@ -119,7 +120,7 @@ export default (state = initialState, action) => {
             break;
         case LOAD_USER_SUCCESS: 
             draft.loadUserLoading = false;
-            draft.me = action.data;
+            draft.userInfo = action.data;
             draft.loadUserDone = true;
             break;
         case LOAD_USER_FAILURE: 
@@ -147,7 +148,7 @@ export default (state = initialState, action) => {
             break;
         case LOAD_FOLLOWERS_SUCCESS: 
             draft.loadFollowersLoading = false;
-            draft.me.followers = action.data;
+            draft.me.Followers = action.data;
             draft.loadFollowersDone = true;
             break;
         case LOAD_FOLLOWERS_FAILURE: 
@@ -161,7 +162,7 @@ export default (state = initialState, action) => {
             break;
         case LOAD_FOLLOWINGS_SUCCESS: 
             draft.loadFollowingsLoading = false;
-            draft.me.follwings = action.data;
+            draft.me.Followings = action.data;
             draft.loadFollowingsDone = true;
             break;
         case LOAD_FOLLOWINGS_FAILURE: 

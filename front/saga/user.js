@@ -257,7 +257,7 @@ function* watchFollow() {
 function* watchUnFollow() {
     yield takeLatest(UNFOLLOW_REQUEST, unFollow)
 }
- 
+
 function* watchMyInfo() {
     yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo)
 }

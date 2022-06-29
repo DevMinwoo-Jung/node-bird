@@ -49,12 +49,58 @@ router.get('/', async (req, res, next) => {
             // 이건 db에서 제공하는게 아니라 구현해서 쓰는 것
             // lastId를 쓰면 좋은게 만약 lastId가 10일때 20 ~ 0이 있다고 가정하면 10이 지워져도 10보다 작은 숫자의 10개를 가져와서 문제가 없다
         });
-        // console.log(posts)
+        console.log(posts)
         res.status(200).json(posts)
     } catch (error) {
         console.error(error);
         next(error);
     }
 });
- 
+
+router.get('/:hashtag', async (req, res, next) => { //get /hashtag/
+    try {
+        const where = {};
+        if (parseInt(req.query.lastId, 10)) { 
+            where.id ={ [Op.lt ]: parseInt(req.query.lastId, 10)} 
+        }
+        const posts = await Post.findAll({ 
+            where,
+            limit: 10,
+            order: [['createdAt', 'DESC'], [Comment, 'createdAt', 'DESC']], 
+            include: [{
+                model: User,
+                attributes: ['id', 'nickname']
+            }, {
+                model: Hashtag,
+                where: { name: req.params.hashtag }
+            }, {
+                model: Image,
+            }, {
+                model: Comment,
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname']
+                }],
+            }, {
+                model: User, // 좋아요 누른 사람
+                as: 'Likers',
+                attributes: ['id'],
+            },
+            {
+                model: Post,
+                as: 'Retweet',
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname'],
+                }, {
+                    model: Image,
+                }]
+            }],
+        });
+        res.status(200).json(posts)
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
 module.exports = router;

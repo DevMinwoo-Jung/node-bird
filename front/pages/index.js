@@ -11,7 +11,7 @@ import axios from "axios";
 
 const Home = () => {
     const { me } = useSelector((state) => state.user)
-    const { mainPosts, hasMorePost, loadPostsLoading, retweetPostError } = useSelector((state) => state.post)
+    const { mainPosts, hasMorePosts, loadPostsLoading, retweetPostError } = useSelector((state) => state.post)
 
     const dispatch = useDispatch()
 
@@ -24,7 +24,7 @@ const Home = () => {
     useEffect(() => {
         function onScroll() {
             if (window.scrollY + document.documentElement.clientHeight > document.documentElement.scrollHeight - 300) {
-                if (hasMorePost && !loadPostsLoading) {
+                if (hasMorePosts && !loadPostsLoading) {
                     const lastId = mainPosts[mainPosts.length - 1]?.id;
                     dispatch({
                 type: LOAD_POSTS_REQUEST,
@@ -37,7 +37,7 @@ const Home = () => {
             return () => {
                 window.removeEventListener('scroll', onScroll);
             };
-        }, [mainPosts, hasMorePost, loadPostsLoading]);
+        }, [mainPosts, hasMorePosts, loadPostsLoading]);
 
     return (
         <AppLayout>

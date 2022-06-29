@@ -3,6 +3,7 @@ const cors = require('cors');
 const postRouter = require('./route/post');
 const userRouter = require('./route/user');
 const postsRouter = require('./route/posts');
+const hashtagRouter = require('./route/hashtag')
 const db = require('./models');
 const passportConfig = require('./passport');
 const session = require('express-session');
@@ -47,6 +48,7 @@ app.use(passport.session());
 app.use('/posts', postsRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);
+app.use('/hashtagRouter', hashtagRouter);
 // app.use((err, req, res, next) => { // error 처리 middleware 여기 있는 것 전부 middleware
 
 // })

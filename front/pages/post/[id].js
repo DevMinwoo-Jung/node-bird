@@ -1,7 +1,7 @@
 import { LOAD_POST_REQUEST } from "../../reducers/post";
 import { LOAD_MY_INFO_REQUEST } from "../../reducers/user";
 import { useRouter } from 'next/router'
-import wrapper from "../../store/configtureStore";
+import wrapper from "../../store/configtureStore"
 import { END } from "redux-saga";
 import axios from "axios";
 import PostCard from "../../components/PostCard";
@@ -25,7 +25,8 @@ const Post = () => {
                 <meta property="og:title" content={`${singlePost.User.nickname}님의 게시글`} />
                 <meta property="og:description" content={singlePost.content} />
                 <meta property="og:image" content={singlePost.Images[0] ? singlePost.Images[0].src : 'https://nodebird.com/favicon.ico'} />
-                <meta property="og:url" content={`https://nodebird.com/post/${id}`} />
+                <meta property="og:url" content={`https://nodebird.com/post/${id}`} /> 
+                {/* 검색엔진에 잘 뜨게 하려고 */}
             </Head>
             <PostCard post={singlePost}/>
         </AppLayout>

@@ -122,7 +122,6 @@ const signup = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-  console.log(context);
   const cookie = context.req ? context.req.headers.cookie : '';
   axios.defaults.headers.Cookie = ''; // 쿠키 공유 방지
   if (context.req && cookie) {
@@ -130,9 +129,6 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
   }
   context.store.dispatch({
       type: LOAD_MY_INFO_REQUEST
-  })
-  context.store.dispatch({
-      type: LOAD_POST_REQUEST
   })
   context.store.dispatch(END);
   await context.store.sagaTask.toPromise();

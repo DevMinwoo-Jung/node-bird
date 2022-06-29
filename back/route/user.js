@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const router = express.Router();
 const passport = require('passport');
 
-const { User, Post } = require('../models');
+const { User, Post, Comment, Image, Hashtag } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
 const db = require('../models');
 
@@ -217,7 +217,10 @@ router.get('/followers', isLoggedIn, async (req, res, next) => { // get/ user/fo
         if (!user) {
             res.status(403).send('cannot get followers');
         }
-        const followers = await user.getFollowers();
+        const followers = await user.getFollowers({
+            attributes: ['id', 'nickname'],
+            limit: parseInt(req.query.limit, 10),
+        });
         res.status(200).json(followers);
     } catch (error) {
         console.error(error);
@@ -231,7 +234,10 @@ router.get('/followings', isLoggedIn, async (req, res, next) => { // get/ user/f
         if (!user) {
             res.status(403).send('cannot get followings');
         }
-        const followings = await user.getFollowings();
+        const followings = await user.getFollowings({
+            attributes: ['id', 'nickname'],
+            limit: parseInt(req.query.limit, 10),
+        });
         res.status(200).json(followings);
     } catch (error) {
         console.error(error);
@@ -239,5 +245,47 @@ router.get('/followings', isLoggedIn, async (req, res, next) => { // get/ user/f
     }
 })
 
+router.get('/:userId/posts', async (req, res, next) => { //get /user/1/posts
+    try {
+        const where = { id: req.params.userId };
+        if (parseInt(req.query.lastId, 10)) { 
+            where.id ={ [Op.lt ]: parseInt(req.query.lastId, 10)} 
+        }
+        const posts = await Post.findAll({ 
+            where,
+            limit: 10,
+            order: [['createdAt', 'DESC'], [Comment, 'createdAt', 'DESC']], 
+            include: [{
+                model: User,
+                attributes: ['id', 'nickname']
+            }, {
+                model: Image,
+            }, {
+                model: Comment,
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname']
+                }],
+            }, {
+                model: User, // 좋아요 누른 사람
+                as: 'Likers',
+                attributes: ['id'],
+            }, {
+                model: Post,
+                as: 'Retweet',
+                include: [{
+                    model: User,
+                    attributes: ['id', 'nickname'],
+                }, {
+                    model: Image,
+                }]
+            }],
+        });
+        res.status(200).json(posts)
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+});
 
 module.exports = router;
