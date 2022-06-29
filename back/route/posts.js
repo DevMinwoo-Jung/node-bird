@@ -49,7 +49,7 @@ router.get('/', async (req, res, next) => {
             // 이건 db에서 제공하는게 아니라 구현해서 쓰는 것
             // lastId를 쓰면 좋은게 만약 lastId가 10일때 20 ~ 0이 있다고 가정하면 10이 지워져도 10보다 작은 숫자의 10개를 가져와서 문제가 없다
         });
-        console.log(posts)
+        // console.log(posts)
         res.status(200).json(posts)
     } catch (error) {
         console.error(error);

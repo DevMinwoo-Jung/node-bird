@@ -9,7 +9,8 @@ import { LOG_IN_REQUEST , LOG_IN_SUCCESS, LOG_IN_FAILURE,
     CHANGE_NICKNAME_SUCCESS, CHANGE_NICKNAME_REQUEST, LOAD_FOLLOWERS_REQUEST,
     LOAD_FOLLOWERS_SUCCESS, LOAD_FOLLOWERS_FAILURE,  LOAD_FOLLOWINGS_REQUEST,
     LOAD_FOLLOWINGS_FAILURE, LOAD_FOLLOWINGS_SUCCESS, REMOVE_FOLLOWER_REQUEST,
-    REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_SUCCESS
+    REMOVE_FOLLOWER_FAILURE, REMOVE_FOLLOWER_SUCCESS, LOAD_USER_FAILURE, 
+    LOAD_USER_REQUEST, LOAD_USER_SUCCESS
 
 } from '../reducers/user' 
 
@@ -116,13 +117,33 @@ function* signUp(action) {
     }
 }
 
+function loadUserAPI(data) {
+    return axios.get(`/user/${data}`) // 쿠키라 데이터가 없데..
+}
+
+function* loadUser(action) {
+    try {
+        const result = yield call(loadUserAPI, action.data);
+        yield put({
+            type: LOAD_USER_SUCCESS,
+            data: result.data
+        });
+    } catch (err) {
+        console.log(err)
+        yield put({
+            type: LOAD_USER_FAILURE,
+            error: err.response.data
+        })
+    }
+}
+
 function loadMyInfoAPI() {
     return axios.get('/user') // 쿠키라 데이터가 없데..
 }
 
-function* loadMyInfo(action) {
+function* loadMyInfo() {
     try {
-        const result = yield call(loadMyInfoAPI, action.data);
+        const result = yield call(loadMyInfoAPI);
         yield put({
             type: LOAD_MY_INFO_SUCCESS,
             data: result.data
@@ -237,7 +258,7 @@ function* watchUnFollow() {
     yield takeLatest(UNFOLLOW_REQUEST, unFollow)
 }
  
-function* watchLoadUser() {
+function* watchMyInfo() {
     yield takeLatest(LOAD_MY_INFO_REQUEST, loadMyInfo)
 }
 
@@ -257,6 +278,10 @@ function* watchRemoveFollower() {
     yield takeLatest(REMOVE_FOLLOWER_REQUEST, removeFollowers)
 }
 
+function* watchLoadUser() {
+    yield takeLatest(LOAD_USER_REQUEST, loadUser)
+}
+
 export default function* userSaga() {
     yield all([
         fork(watchLogin),
@@ -264,6 +289,7 @@ export default function* userSaga() {
         fork(watchFollow),
         fork(watchUnFollow),
         fork(watchSigUp),
+        fork(watchMyInfo),
         fork(watchLoadUser),
         fork(watchChangeNicknamePost),
         fork(watchLoadFollowingsPost),

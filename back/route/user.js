@@ -9,6 +9,7 @@ const db = require('../models');
 
 
 router.get('/', async (req, res, next) => {
+    console.log(req.headers)
     try {
         if (req.user) {
             const fullUserWithoutPassword = await User.findOne({
@@ -33,6 +34,41 @@ router.get('/', async (req, res, next) => {
         } else {
             res.status(200).json(null);
         }
+    } catch (error) {
+        console.error(error);
+        next(error);
+    }
+})
+
+router.get('/:userId', async (req, res, next) => { // get/user1
+    try {
+            const fullUserWithoutPassword = await User.findOne({
+                where: { id: req.params.userId },
+                attributes: {
+                    exclude: ['password'] // 비밀번호 제외하고 다 가져온다
+                },
+                include: [{ // 다른 테블의 정보를 가져올 때  쓴다 (join 같은 것 인듯)
+                    model: Post, 
+                    attributes: ['id'],
+                }, {
+                    model: User,
+                    as: 'Followings',
+                    attributes: ['id'],
+                }, { 
+                    model: User,
+                    as: 'Followers',
+                    attributes: ['id'],
+                }]
+            })
+            if (fullUserWithoutPassword) {
+                const data = fullUserWithoutPassword.toJSON();
+                data.Posts = data.Posts.length; // 개인정보 침해 예방
+                data.Followers = data.Followers.length;
+                data.Followings = data.Followings.length;
+                res.status(200).json(data);
+            } else {
+                res.status(404).json('존재하지 않는 아이디입니다.');
+            }
     } catch (error) {
         console.error(error);
         next(error);

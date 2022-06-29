@@ -11,7 +11,9 @@ import { ADD_COMMENT_FAILURE, ADD_COMMENT_SUCCESS,
             UNLIKE_POST_REQUEST, REMOVE_POST_REQUEST,
             UPLOAD_IMAGES_FAILURE, UPLOAD_IMAGES_REQUEST,
             UPLOAD_IMAGES_SUCCESS, RETWEET_POST_FAILURE,
-            RETWEET_POST_REQUEST, RETWEET_POST_SUCCESS
+            RETWEET_POST_REQUEST, RETWEET_POST_SUCCESS,
+            LOAD_POSTS_REQUEST, LOAD_POSTS_FAILURE,
+            LOAD_POSTS_SUCCESS
 } from '../reducers/post';
 import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 import shortid from 'shortid';
@@ -130,13 +132,34 @@ function* unlikePost(action) {
     }
 }
 
-function loadPostAPI(lastId) {
+function loadPostsAPI(lastId) {
     return axios.get(`/posts?lastId=${lastId || 0}`);
+}
+
+function* loadPosts(action) {
+    try {
+        const result = yield call(loadPostsAPI, action.lastId);
+        yield put({
+        type: LOAD_POSTS_SUCCESS,
+        data: result.data,
+        })
+    } catch (err) {
+        console.log(err)
+        yield put({
+        type: LOAD_POSTS_FAILURE,
+        error: err.response.data,
+        });
+    }
+}
+
+
+function loadPostAPI(data) {
+    return axios.get(`/post/${data}`);
 }
 
 function* loadPost(action) {
     try {
-        const result = yield call(loadPostAPI, action.lastId);
+        const result = yield call(loadPostAPI, action.data);
         yield put({
         type: LOAD_POST_SUCCESS,
         data: result.data,
@@ -201,10 +224,13 @@ function* watchRemovePost() {
     yield takeLatest(REMOVE_POST_REQUEST, removePost)
 }
 
+function* watchLoadPosts() {
+    yield takeLatest(LOAD_POSTS_REQUEST, loadPosts)
+}
+
 function* watchLoadPost() {
     yield takeLatest(LOAD_POST_REQUEST, loadPost)
 }
-
 function* watchLikePost() {
     yield takeLatest(LIKE_POST_REQUEST, likePost)
 }
@@ -227,6 +253,7 @@ export default function* rootSaga() {
         fork(watchCommentPost),
         fork(watchRemovePost),
         fork(watchLoadPost),
+        fork(watchLoadPosts),
         fork(watchLikePost),
         fork(watchUnlikePost),
         fork(watchUploadImagesPost),
