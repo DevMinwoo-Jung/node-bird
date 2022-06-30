@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const router = express.Router();
 const passport = require('passport');
+const { Op } = require('sequelize');
 
 const { User, Post, Comment, Image, Hashtag } = require('../models');
 const { isLoggedIn, isNotLoggedIn } = require('./middlewares');
@@ -247,27 +248,29 @@ router.get('/followings', isLoggedIn, async (req, res, next) => { // get/ user/f
 
 router.get('/:userId/posts', async (req, res, next) => { //get /user/1/posts
     try {
-        const where = { id: req.params.userId };
-        if (parseInt(req.query.lastId, 10)) { 
-            where.id ={ [Op.lt ]: parseInt(req.query.lastId, 10)} 
-        }
-        const posts = await Post.findAll({ 
+        const user = await User.findOne({ where: { id: req.params.userId }});
+        if (user) {
+            const where = {};
+            if (parseInt(req.query.lastId, 10)) { // 초기 로딩이 아닐 때
+                where.id = { [Op.lt]: parseInt(req.query.lastId, 10)}
+            }
+        const posts = await user.getPosts({ 
             where,
             limit: 10,
-            order: [['createdAt', 'DESC'], [Comment, 'createdAt', 'DESC']], 
             include: [{
-                model: User,
-                attributes: ['id', 'nickname']
-            }, {
                 model: Image,
             }, {
                 model: Comment,
                 include: [{
                     model: User,
-                    attributes: ['id', 'nickname']
-                }],
+                    attributes: ['id', 'nickname'],
+                }]
             }, {
-                model: User, // 좋아요 누른 사람
+                model: User,
+                attributes: ['id', 'nickname'],
+            }, {
+                model: User,
+                through: 'Like',
                 as: 'Likers',
                 attributes: ['id'],
             }, {
@@ -276,12 +279,15 @@ router.get('/:userId/posts', async (req, res, next) => { //get /user/1/posts
                 include: [{
                     model: User,
                     attributes: ['id', 'nickname'],
-                }, {
-                    model: Image,
+            }, {
+                model: Image,
                 }]
             }],
         });
         res.status(200).json(posts)
+        } else {
+            res.status(404).send('존재하지 않는 사용자입니다.');
+        }
     } catch (error) {
         console.error(error);
         next(error);

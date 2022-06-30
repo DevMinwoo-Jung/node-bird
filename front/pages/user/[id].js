@@ -18,6 +18,7 @@ const User = () => {
     const { mainPosts, hasMorePosts, loadUserPostsLoading } = useSelector((state) => state.post);
     const { id } = router.query;
     const { userInfo } = useSelector((state) => state.user);
+    console.log(mainPosts)
     
     useEffect(() => {
         const onScroll = () => {
@@ -104,7 +105,7 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
     });
     context.store.dispatch(END);
     await context.store.sagaTask.toPromise();
-    console.log('getState', context.store.getState().post.mainPosts);
+    console.log('getStafffte', context.store.getState().post.mainPosts);
     return { props: {} };
 });
                 

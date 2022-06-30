@@ -48,6 +48,7 @@ export const getServerSideProps = wrapper.getServerSideProps(async (context) => 
         data: context.params.id
     })
     context.store.dispatch(END);
+    console.log('getdddState', context.store.getState().post.mainPosts);
     await context.store.sagaTask.toPromise();
 });
 

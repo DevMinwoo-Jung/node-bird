@@ -20,6 +20,7 @@ module.exports = (sequelize, DataType) => {
         tableName: 'users',
         charset: 'utf8',
         collate: 'utf8_general_ci', //한글저장
+        sequelize,
     });
     User.associate = (db) => {
         db.User.hasMany(db.Post);

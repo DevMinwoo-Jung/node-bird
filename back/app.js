@@ -48,7 +48,7 @@ app.use(passport.session());
 app.use('/posts', postsRouter);
 app.use('/post', postRouter);
 app.use('/user', userRouter);
-app.use('/hashtagRouter', hashtagRouter);
+app.use('/hashtag', hashtagRouter);
 // app.use((err, req, res, next) => { // error 처리 middleware 여기 있는 것 전부 middleware
 
 // })
