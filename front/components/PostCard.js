@@ -5,6 +5,7 @@ import { RetweetOutlined, HeartTwoTone, HeartOutlined, MessageOutlined, Ellipsis
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
+import moment from 'moment';
 
 import CommentForm from './CommentForm';
 import PostCardContent from './PostCardContent';
@@ -15,6 +16,8 @@ import { REMOVE_POST_REQUEST, LIKE_POST_REQUEST, UNLIKE_POST_REQUEST, RETWEET_PO
 const CardWrapper = styled.div`
     margin-bottom: 20px;
 `;
+
+moment.locale('ko');
 
 const PostCard = ({ post }) => {
     const [commentFormOpened, setCommentFormOpened] = useState(false);
@@ -97,6 +100,12 @@ const PostCard = ({ post }) => {
                         <Card
                         cover={post.Retweet[0] && <PostImages images={post.Retweet.Images} />}
                         >
+                        <div style={{ float: 'right'}}>
+                            {moment(post.createdAt).format('YYYY.MM.DD')}
+                            <br/>
+                            {moment(post.createdAt).endOf('day').fromNow()} 
+                            {/* new Date().getFullYear() + new Date().getMonth() ..... 를 안해줘도 된다*/}
+                        </div>
                         <Card.Meta
                         avatar={
                         <Link href={`/user/${post.Retweet.User.id}`}>
@@ -108,6 +117,13 @@ const PostCard = ({ post }) => {
                         </Card>
                     )
                         : (
+                        <>
+                        <div style={{ float: 'right'}}>
+                            {moment(post.createdAt).format('YYYY.MM.DD')}
+                            <br/>
+                            {moment(post.createdAt).endOf('day').fromNow()} 
+                            {/* new Date().getFullYear() + new Date().getMonth() ..... 를 안해줘도 된다*/}
+                        </div>
                         <Card.Meta
                         avatar={
                             <Link href={`/user/${post.User.id}`}>
@@ -116,6 +132,7 @@ const PostCard = ({ post }) => {
                         title={post.User.nickname}
                         description={<PostCardContent postData={post.content} />}
                         />
+                        </>    
                     )
                 }
             </Card>
