@@ -33,6 +33,20 @@ const Post = () => {
     )
 }
 
+// export async function getStaticPaths() {
+//     return {
+//         paths: [
+//             { params: { id: '1' } },
+//             { params: { id: '2' } },
+//             { params: { id: '3' } },
+//             { params: { id: '4' } },
+//         ],
+//         fallback: true,
+//     };
+// }
+// // 1,2,3이 미리 만들어진다
+
+
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
     console.log(context);
     const cookie = context.req ? context.req.headers.cookie : '';

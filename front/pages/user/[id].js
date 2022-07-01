@@ -9,8 +9,8 @@ import axios from 'axios';
 import { LOAD_USER_POSTS_REQUEST } from '../../reducers/post';
 import { LOAD_MY_INFO_REQUEST, LOAD_USER_REQUEST } from '../../reducers/user';
 import PostCard from '../../components/PostCard';
-import wrapper from "../../store/configtureStore";
-import AppLayout from "../../components/AppLayout";
+import wrapper from '../../store/configtureStore';
+import AppLayout from '../../components/AppLayout';
 
 const User = () => {
     const dispatch = useDispatch();
@@ -85,6 +85,9 @@ const User = () => {
         </AppLayout>
     );
 };
+
+
+
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
     const cookie = context.req ? context.req.headers.cookie : '';

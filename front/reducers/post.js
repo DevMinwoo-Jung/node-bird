@@ -1,6 +1,6 @@
 import shortid from 'shortid'
 import produce from 'immer'
-import faker from 'faker'
+// import faker from 'faker'
 
 export const initialState = {
   mainPosts: [],
@@ -79,24 +79,24 @@ const dummy = {
   }]
 }
 
-export const generateDummyPost = (number) => Array(number).fill().map(() => ({
-  id: shortid.generate(),
-  User: {
-    id: shortid.generate(),
-    nickname: faker.name.findName(),
-  },
-  content: faker.lorem.paragraph(),
-  Images: [{
-    src: faker.image.image(),
-  }],
-  Comments: [{
-    User: {
-      id: shortid.generate(),
-      nickname: faker.name.findName(),
-    },
-    content: faker.lorem.sentence(),
-  }],
-}));
+// export const generateDummyPost = (number) => Array(number).fill().map(() => ({
+//   id: shortid.generate(),
+//   User: {
+//     id: shortid.generate(),
+//     nickname: faker.name.findName(),
+//   },
+//   content: faker.lorem.paragraph(),
+//   Images: [{
+//     src: faker.image.image(),
+//   }],
+//   Comments: [{
+//     User: {
+//       id: shortid.generate(),
+//       nickname: faker.name.findName(),
+//     },
+//     content: faker.lorem.sentence(),
+//   }],
+// }));
 
 // initialState.mainPosts = initialState.mainPosts.concat(
 //   Array(20).fill().map(() => ({

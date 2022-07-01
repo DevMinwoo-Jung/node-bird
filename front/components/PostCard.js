@@ -21,6 +21,7 @@ const PostCard = ({ post }) => {
     const id = useSelector((state) => state.user.me && state.user.me.id);
     const dispatch = useDispatch();
     const { removePostLoading, retweetError } = useSelector((state) => state.post);
+    console.log(post)
 
     const onLike = useCallback(() => {
         dispatch({
@@ -97,7 +98,10 @@ const PostCard = ({ post }) => {
                         cover={post.Retweet[0] && <PostImages images={post.Retweet.Images} />}
                         >
                         <Card.Meta
-                        avatar={<Avatar>{post.Retweet.User.nickname[0]}</Avatar>}
+                        avatar={
+                        <Link href={`/user/${post.Retweet.User.id}`}>
+                            <a><Avatar>{post.Retweet.User.nickname[0]}</Avatar></a>
+                        </Link>}
                         title={post.Retweet.User.nickname}
                         description={<PostCardContent postData={post.Retweet.content} />}
                         />
@@ -105,7 +109,10 @@ const PostCard = ({ post }) => {
                     )
                         : (
                         <Card.Meta
-                        avatar={<Avatar>{post.User.nickname[0]}</Avatar>}
+                        avatar={
+                            <Link href={`/user/${post.User.id}`}>
+                                <a><Avatar>{post.User.nickname[0]}</Avatar></a>
+                            </Link>}
                         title={post.User.nickname}
                         description={<PostCardContent postData={post.content} />}
                         />
@@ -123,11 +130,11 @@ const PostCard = ({ post }) => {
                             <li>
                                 <Comment
                                     author={item.User.nickname}
-                                    avatar={(
-                                        <Link href={{ pathname: '/user', query: { id: item.User.id } }} as={`/user/${item.User.id}`}>
-                                            <a><Avatar>{item.User.nickname[0]}</Avatar></a>
+                                    avatar={
+                                        <Link href={`/user/${item.User.id}`}>
+                                            <a><Avatar>{post.User.nickname[0]}</Avatar></a>
                                         </Link>
-                                    )}
+                                        }
                                     content={item.content}
                                 />
                             </li>

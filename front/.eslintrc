@@ -13,7 +13,6 @@
     "es6": true
   },
   "extends": [
-    "airbnb"
   ],
   "plugins": [
     "import",
@@ -29,6 +28,6 @@
     "react/jsx-one-expression-per-line": "off",
     "object-curly-newline": "off",
     "linebreak-style": "off",
-    "no-param-reassign": "off"
+    "no-param-reassign": "off",
   }
 }

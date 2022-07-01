@@ -1,7 +1,7 @@
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { END } from "redux-saga";
+import { END } from 'redux-saga';
 
 import axios from "axios";
 import wrapper from "../../store/configtureStore";
@@ -15,7 +15,7 @@ const Hashtag = () => {
     const router = useRouter();
     const { tag } = router.query;
     const { mainPosts, hasMorePosts, loadHashtagPostsLoading } = useSelector((state) => state.post);
-    console.log(tag)
+    console.log(mainPosts)
     console.log(useSelector((state) => state.post))
 
     useEffect(() => {
@@ -46,8 +46,6 @@ const Hashtag = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(async (context) => {
-    console.log(context);
-    console.log('시발---------')
     const cookie = context.req ? context.req.headers.cookie : '';
     axios.defaults.headers.Cookie = ''; 
     if (context.req && cookie) {
